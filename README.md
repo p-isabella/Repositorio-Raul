@@ -1,6 +1,6 @@
 <h1>Artefatos:</h1>
 
-**Documento: ** https://docs.google.com/document/d/1Icqp6rsOwVp0axlA3mHyNOXZP-bZppwqsr5qfm-IC2Q/edit?tab=t.0
+**Documento:** https://docs.google.com/document/d/1Icqp6rsOwVp0axlA3mHyNOXZP-bZppwqsr5qfm-IC2Q/edit?tab=t.0
 
 **Requisitos Funcionais:** https://1drv.ms/x/c/4a19299dbc5baa0f/EccgBYI5AoJIq5D7_A2eG-cBXS54f6yoIotimKSNldWXZg
 
