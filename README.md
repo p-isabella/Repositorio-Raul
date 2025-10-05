@@ -7,3 +7,5 @@
 **Requisitos Não Funcionais:** https://1drv.ms/x/c/4a19299dbc5baa0f/EWvyKzADBCFGoo0zM2SQp94BqbEAfHwgWQok29_mjtyY3Q
 
 **Descrição dos Casos de Uso:** https://1drv.ms/x/c/4a19299dbc5baa0f/EbH1amJsG8pFlYB9YO4yllMBNyRzLtntTPrj0uuWgzN8mw?e=nbjFQi
+
+**Mapa de interface:** https://excalidraw.com/#room=a96f87e9a714049d8cfe,oX3xd4JP8HAp7LfijFvytg
