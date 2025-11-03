@@ -11,3 +11,4 @@
 **Mapa de interface:** https://excalidraw.com/#room=a96f87e9a714049d8cfe,oX3xd4JP8HAp7LfijFvytg
 https://excalidraw.com/#room=8186bed43da0c0f118be,w0n_zsZMO7Uhtnw4VBPD7w
 
+**Diagrama de Classes:** https://docs.google.com/spreadsheets/d/1Sy-1WcQpfp2StBw4HEh29BTfGERsLHu6C-kpLWNpn58/edit?usp=sharing
