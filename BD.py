@@ -71,6 +71,7 @@ class BancoDeDados():
 
     def CriaEntidade(self):
         while True:
+            os.system('cls')
             resposta = questionary.select(
                 "Qual entidade você deseja criar?",
                 choices=[
@@ -107,7 +108,7 @@ class BancoDeDados():
 
     def visualizaBiblioteca(self):
         while True:
-            
+            os.system('cls')
             escolha = questionary.select(
                 "Qual biblioteca você deseja visitar?",
                 choices=[
@@ -126,6 +127,7 @@ class BancoDeDados():
                 self.mostraColecaoCampanhas()
             elif escolha == 2:
                 while True:
+                        os.system('cls')
                         print("-"*65)
                         print("Biblioteca de Entidades:\n")
 
@@ -151,6 +153,7 @@ class BancoDeDados():
     def escolheColecaoEntidade(self):
             print("◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥")
             while True:
+                os.system('cls')
                 decisao = questionary.select(
                     "Escolha uma coleção para editar:",
                     choices=[
@@ -191,6 +194,7 @@ class BancoDeDados():
             opcoes.append(questionary.Choice("Voltar", 0))
             
             while True:
+                os.system('cls')
                 escolha = questionary.select(
                     "Quem você deseja editar?",
                     choices=opcoes,
@@ -208,74 +212,80 @@ class BancoDeDados():
     def EscolheEntidadeColecao(self):
             print("◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥")
             while True: 
-                try:
-                    decisao = int(input("Escolha uma coleção para excluir uma entidade:\n[1] Criaturas \n[2] Jogadores \n[3] NPCs\n>>"))
-                    if decisao == 1:
-                        return self.__BancodeCriaturas
-                    elif decisao == 2:
-                        return self.__BancodeJogadores
-                    elif decisao == 3:
-                        return self.__BancodeNPCS
-                    else:
-                        print("Escolha inválida, vamos tentar novamente.")
-                        time.sleep(0.8)
-                        os.system('cls')
+                os.system('cls')
+                decisao = questionary.select(
+                    "Escolha uma coleção para excluir a entidade:",
+                    choices=[
+                        questionary.Choice("Criaturas", 1),
+                        questionary.Choice("Jogadores", 2),
+                        questionary.Choice("NPCs", 3),
+                        questionary.Choice("Voltar", 0)
+                    ],
+                    qmark=" ",
+                    instruction=" "
+                ).ask()
 
-                except ValueError:
-                    print("Você inseriu algo errado. Vamos tentar novamente.")
-                    continue
-                
-                break
+                if decisao == 0:
+                    break
+                if decisao == 1:
+                    return self.__BancodeCriaturas
+                elif decisao == 2:
+                    return self.__BancodeJogadores
+                elif decisao == 3:
+                    return self.__BancodeNPCS
+
             print("◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢")
 
     def EscolheEntidadeRemocao(self):
-        colecao = escolheEntidade
+        colecao = self.EscolheEntidadeColecao()
         if len(colecao) == 0:
             print("A biblioteca em questão está vazia para alguma edição.")
         else:
-            time.sleep(1)
-            print("-"*50)
-            print("Quem você deseja remover?\n")
+            opcoes = []
             contador = 0
             for i in colecao:
-                print(f"[{contador+1}]", i.mostraNome())
+                opcoes.append(questionary.Choice(i.mostraNome(), contador))
                 contador += 1
+            opcoes.append(questionary.Choice("Voltar", 0))
 
         while True:
-            try:
-                escolha = int(input(">> "))
-                entidadeEscolhida = colecao[escolha-1]
-                entidadeEscolhida.removeEntidadee()
-            except ValueError:
-                print("Opa, valor inválido, vamos tentar novamente.")
-                continue
+            os.system('cls')
+            escolha = questionary.select(
+                "Quem você deseja remover?",
+                choices=opcoes,
+                qmark=" "
+            ).ask()
+
+            if escolha == 0:
+                break
+
+            entidadeEscolhida = colecao[escolha-1]
+            entidadeEscolhida.removeEntidade() #função remove ainda não foi feita
 
     def removeEntidade(entidadeEscolhida):
         pass
         
 
-    def confirmação(self):
+    def confirmacao(self):
         while True:
+            os.system('cls')
             print("══════════════════════◄••❀••►══════════════════════")
-            print("Você tem certeza dessa ação?\n[1]Sim\n[2]Não")
+            confirma = questionary.select(
+                "Você tem certeza dessa ação?",
+                choices=[
+                    questionary.Choice("Sim", 1),
+                    questionary.Choice("Não", 2)
+                ],
+                qmark=" ",
+                instruction=" "
+            ).ask()
             print("══════════════════════◄••❀••►══════════════════════")
-            try:
-                confirma = int(input("\n>>"))
-                if confirma == 1:
-                    return True
-                elif confirma == 2:
-                    return False
-                else:
-                    print("Não entendi... Vamos tentar novamente")
-                    time.sleep(0.6)
-                    os.system('cls')
-                    continue
-            except ValueError:
-                print("Opa, entrada inválida!")
-                time.sleep(0.6)
-                os.system('cls')
-                continue
-    
+                
+            if confirma == 1:
+                return True
+            elif confirma == 2:
+                return False
+
     def obtemNPCs(self):
         return self.__BancodeNPCS
     
