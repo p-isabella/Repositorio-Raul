@@ -1,6 +1,9 @@
 
 from biblioteca import only_int
+from campanha import Campanha
+from BD import BancoDeDados
 import os
+
 class ControlaCombate():
 
     def __init__(self):
@@ -39,8 +42,8 @@ class ControlaCombate():
         self._turno += 1
     
 
-    def fichaInesperada():
-        pass
+    def fichaInesperada(self):
+        BancoDeDados.CriaEntidade(BancoDeDados)
 
     def menuCombate(self):
 
@@ -72,6 +75,7 @@ class ControlaCombate():
                 return 3
     
 
+    #def addAoCombate(self,)
 
 
     def Combate(self):
