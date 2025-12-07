@@ -24,7 +24,8 @@ class Entidade():
         self._Intelecto = 0
         self._Presenca = 0
         self._Defesa = 0
-        self._Turno = 1
+        self._Iniciativa = 0
+        
 
     def mostracontadorID(self):
         return self.contadorID
@@ -101,7 +102,10 @@ class Entidade():
     def mostraDefesa(self):
         return self._Defesa
 
-    def mostraTurno(self):
+    def insereIniciativa(self, iniciativa):
+        self._Iniciativa = iniciativa
+
+    def mostraIniciativa(self):
         return self._Turno
 
     # --------------------------------------------------------
@@ -566,3 +570,4 @@ class Criatura(Entidade):
                 break
 
         print("Pronto. Ficha finalizada!")
+
