@@ -259,6 +259,17 @@ class BancoDeDados():
                 os.system('cls')
                 continue
     
+    def obtemNPCs(self):
+        return self.__BancodeNPCS
+    
+    def obtemCriaturas(self):
+        return self.__BancodeCriaturas
+    
+    def obtemJogadores(self):
+        return self.__BancodeJogadores
+
 bd = BancoDeDados()
 dadostestesBD(bd)
-bd.escolheColecaoEntidade()
+
+if __name__ == "__main__":
+    bd.escolheColecaoEntidade()
