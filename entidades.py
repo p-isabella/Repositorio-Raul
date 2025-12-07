@@ -1,6 +1,7 @@
 # ------------------------
 import os
 import time
+import questionary
 # ------------------------
 
 # classe entidade:
@@ -153,8 +154,14 @@ class Entidade():
             self.limpaTelaEmostraFicha()
             #add Vida:
             while True:
-                respostaVida = input("A vida inicial é 20, deseja alterar?\n>>").lower()
-                if respostaVida in ['sim','s']:
+                respostaVida = questionary.select(
+                    "A vida inicial é 20, deseja alterar?",
+                    choices=['Sim', 'Não'],
+                    qmark=" ",
+                    instruction=" "
+                ).ask()
+
+                if respostaVida == 'Sim':
                     while True:
                         try:
                             valorVida = int(input("Qual a quantidade de vida do seu personagem?\n>> "))
@@ -165,22 +172,23 @@ class Entidade():
                         except ValueError:
                             print("Opa, você digitou algo errado! Vamos tentar de novo.")
                             continue
-                    
                     break
 
-                elif respostaVida in ['nao', 'não', 'n']:
+                elif respostaVida == 'Não':
                     print("Ok! Vamos manter.")
                     self.limpaTelaEmostraFicha()
                     break
 
-                else:
-                    print("Acho que não entendi... Vamos tentar novamente.")
-                    continue
-
             #add deslocamento:
             while True:
-                respostaDeslocamento = input("O deslocamento inicial é 10 metros, deseja alterar?\n>>").lower()
-                if respostaDeslocamento in ['sim', 's']:
+                respostaDeslocamento = questionary.select(
+                    "O deslocamento inicial é 10 metros, deseja alterar?",
+                    choices=['Sim', 'Não'],
+                    qmark=" ",
+                    instruction=" "
+                ).ask()
+
+                if respostaDeslocamento == 'Sim':
                     while True:
                         try:
                             valorDeslocamento = float(input("Qual o deslocamento do seu personagem?\n>> "))
@@ -191,17 +199,12 @@ class Entidade():
                         except ValueError:
                             print("Ops! Você digitou algo errado, vamos tentar novamente.")
                             continue
-
                     break
 
-                elif respostaDeslocamento in ['nao', 'não', 'n']:
+                elif respostaDeslocamento == 'Não':
                     print("Ok! Vamos manter.")
                     self.limpaTelaEmostraFicha()
                     break
-
-                else:
-                    print("Acho que não entendi... Vamos tentar novamente.")
-                    continue
 
             #add atributos:
             print("Agora, vamos aos atributos:\n")
@@ -367,15 +370,27 @@ class NPC(Entidade):
                 continue
         #add inventario:
         while True:
-            respostaInventario = input("O inventário está vazio, deseja inserir algo?\n>>").lower()
-            if respostaInventario in ['sim','s']:
+            respostaInventario = questionary.select(
+                "O inventário está vazio, deseja inserir algo?",
+                choices=['Sim', "Não"],
+                qmark=" ",
+                instruction=" "
+            ).ask()
+
+            if respostaInventario == 'Sim':
                 while True:
                     try:
                         elemento = input("O que você deseja inserir?\n>> ")
                         self.insereElementoInventario(elemento)
                         self.limpaTelaEmostraFicha()
-                        respostaInventario2 = input("Deseja inserir mais alguma coisa?\n>> ").lower()
-                        if respostaInventario2 not in ['s', 'sim']:
+                        respostaInventario2 = questionary.select(
+                            "Deseja inserir mais alguma coisa?",
+                            choices=['Sim', 'Não',],
+                            qmark= " ",
+                            instruction=" "
+                        ).ask()
+
+                        if respostaInventario2 == 'Não':
                             break
 
                     except ValueError:
@@ -383,24 +398,33 @@ class NPC(Entidade):
                         continue
                 break
 
-            elif respostaInventario in ['nao', 'n', 'não']:
+            elif respostaInventario == "Não":
                 print("Ok, o inventário continuará vazio.")
                 break
-            else:
-                print("Acho que não entendi o que você quis dizer, vamos tentar de novo.")    
-                continue
 
         #add ataques:
         while True:
-            respostaAtaques = input("A lista de ataques está vazia, deseja inserir algo?\n>>").lower()
-            if respostaAtaques in ['sim','s']:
+            respostaAtaques = questionary.select(
+                "A lista de ataques está vazia, deseja inserir algo?",
+                choices=['Sim', "Não"],
+                qmark=" ",
+                instruction=" "
+            ).ask()
+
+            if respostaAtaques == 'Sim':
                 while True:
                     try:
                         elemento = input("O que você deseja inserir?\n>> ")
                         self.insereElementoAtaques(elemento)
                         self.limpaTelaEmostraFicha()
-                        respostaAtaques2 = input("Deseja inserir mais alguma coisa?\n>> ").lower()
-                        if respostaAtaques2 not in ['s', 'sim']:
+                        respostaAtaques2 = questionary.select(
+                            "Deseja inserir mais alguma coisa?",
+                            choices=['Sim', "Não"],
+                            qmark=" ",
+                            instruction=" "
+                        ).ask()
+
+                        if respostaAtaques2 == 'Não':
                             break
 
                     except ValueError:
@@ -408,13 +432,10 @@ class NPC(Entidade):
                         continue
                 break
 
-            elif respostaAtaques in ['nao', 'n', 'não']:
+            elif respostaAtaques == 'Não':
                 print("Ok, a lista de ataques permanecerá vazia.")
                 self.limpaTelaEmostraFicha()
                 break
-            else:
-                print("Acho que não entendi o que você quis dizer, vamos tentar de novo.")    
-                continue   
 
         print("Pronto. Ficha finalizada!")     
 
@@ -475,15 +496,27 @@ class Criatura(Entidade):
 
         #add inventario:
         while True:
-            respostaInventario = input("O inventário está vazio, deseja inserir algo?\n>>").lower()
-            if respostaInventario in ['sim','s']:
+            respostaInventario = questionary.select(
+                "O inventário está vazio, deseja inserir algo?",
+                choices=['Sim', "Não"],
+                qmark=" ",
+                instruction=" "
+            ).ask()
+
+            if respostaInventario == 'Sim':
                 while True:
                     try:
                         elemento = input("O que você deseja inserir?\n>> ")
                         self.insereElementoInventario(elemento)
                         self.limpaTelaEmostraFicha()
-                        respostaInventario2 = input("Deseja inserir mais alguma coisa?\n>> ").lower()
-                        if respostaInventario2 not in ['s', 'sim']:
+                        respostaInventario2 = questionary.select(
+                            "Deseja inserir mais alguma coisa?",
+                            choices=['Sim', "Não"],
+                            qmark=" ",
+                            instruction=" "
+                        ).ask()
+
+                        if respostaInventario2 == 'Não':
                             break
 
                     except ValueError:
@@ -492,24 +525,33 @@ class Criatura(Entidade):
                 self.limpaTelaEmostraFicha()
                 break
 
-            elif respostaInventario in ['nao', 'n', 'não']:
+            elif respostaInventario == 'Não':
                 print("Ok, o inventário continuará vazio.")
                 break
-            else:
-                print("Acho que não entendi o que você quis dizer, vamos tentar de novo.")    
-                continue
 
         #add ataques:
         while True:
-            respostaAtaques = input("A lista de ataques está vazia, deseja inserir algo?\n>>").lower()
-            if respostaAtaques in ['sim','s']:
+            respostaAtaques = questionary.select(
+                "A lista de ataques está vazia, deseja inserir algo?",
+                choices=['Sim', "Não"],
+                qmark=" ",
+                instruction=" "
+            ).ask()
+
+            if respostaAtaques == 'Sim':
                 while True:
                     try:
                         elemento = input("O que você deseja inserir?\n>> ")
                         self.insereElementoAtaques(elemento)
                         self.limpaTelaEmostraFicha()
-                        respostaAtaques2 = input("Deseja inserir mais alguma coisa?\n>> ").lower()
-                        if respostaAtaques2 not in ['s', 'sim']:
+                        respostaAtaques2 = questionary.select(
+                            "Deseja inserir mais alguma coisa?",
+                            choices=['Sim', "Não"],
+                            qmark=" ",
+                            instruction=" "
+                        ).ask()
+
+                        if respostaAtaques2 == 'Não':
                             break
 
                     except ValueError:
@@ -518,13 +560,9 @@ class Criatura(Entidade):
                 self.limpaTelaEmostraFicha()
                 break
 
-            elif respostaAtaques in ['nao', 'n', 'não']:
+            elif respostaAtaques == 'Não':
                 print("Ok, a lista de ataques permanecerá vazia.")
                 self.limpaTelaEmostraFicha()
                 break
-            else:
-                print("Acho que não entendi o que você quis dizer, vamos tentar de novo.")    
-                continue   
 
-        print("Pronto. Ficha finalizada!")    
-        
+        print("Pronto. Ficha finalizada!")
