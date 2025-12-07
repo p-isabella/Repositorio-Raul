@@ -7,6 +7,7 @@ from entidades import Entidade
 from dadostestes import dadostestesBD
 import os
 import time
+import questionary
 # --------------------------
 
 teste = Entidade()
@@ -24,173 +25,189 @@ class BancoDeDados():
 
             if len(lista) == 0:
                 print(f"A biblioteca de {nome.lower()} está vazia.")
+                questionary.press_any_key_to_continue("Pression qualquer tecla para voltar").ask()
+                break
             else:
                 print("━━" * 20)
                 print(f"{nome}:\n")
                 for i in lista:
                     print("- ", i.mostraNome())
 
-            try:
-                digito = int(input("\nDigite 0 para sair da lista:\n>> "))
-                if digito == 0:
+                escolha = questionary.select(
+                    " ",
+                    choices=[questionary.Choice("Voltar", 0)],
+                    qmark=" ",
+                    instruction=" "
+                ). ask()
+
+                if escolha == 0:
                     os.system('cls')
-                    break
-                else:
-                    print("Digite apenas 0 para sair.")
-                    time.sleep(0.7)
-
-            except ValueError:
-                print("Valor inválido! Digite somente números.")
-                time.sleep(0.7)
-
-
+                    break 
+   
     def mostraColecaoCampanhas(self):
         while True:
             os.system('cls')
             
             if len(self.__BancodeCampanhas) == 0:
                 print("A biblioteca de campanhas está vazia.")
+                questionary.press_any_key_to_continue("Pressiona qualquer tecla para voltar").ask()
+                break
             else:
                 print("━━" * 20)
                 print("Campanhas:\n")
                 for i in self.__BancodeCampanhas:
                     print("- ", i)
+                
+                escolha = questionary.select(
+                    " ",
+                    choices=[questionary.Choice("Voltar", 0)],
+                    qmark=" ",
+                    instruction=" "
+                ). ask()
 
-            try:
-                digito = int(input("\nDigite 0 para sair da lista:\n>> "))
-                if digito == 0:
+                if escolha == 0:
                     os.system('cls')
-                    break
-                else:
-                    print("Digite apenas 0 para sair.")
-                    time.sleep(0.7)
-
-            except ValueError:
-                print("Valor inválido! Digite somente números.")
-                time.sleep(0.7)
+                    break 
 
     def CriaEntidade(self):
         while True:
-            try:
-                print("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")
-                resposta = int(input("Qual entidade você deseja criar?:\n[1]Criatura\n[2]Jogador\n[3]NPC\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n>>>"))
+            resposta = questionary.select(
+                "Qual entidade você deseja criar?",
+                choices=[
+                    questionary.Choice("Criatura", 1),
+                    questionary.Choice("Jogador", 2),
+                    questionary.Choice("NPC", 3),
+                    questionary.Choice("Voltar", 0)
+                ],
+                qmark=" ",
+                instruction=" "
+            ).ask()
 
-                if resposta == 1:
-                    entidade = Criatura()
-                    self.__BancodeCriaturas.append(entidade)
-                    entidade.editorInicial()
-                    return entidade
-                
-                elif resposta == 2:
-                    entidade = Jogador()
-                    self.__BancodeJogadores.append(entidade)
-                    entidade.editorInicial()
-                    entidade.visualizaEntidade()
-                    return entidade
-                
-                elif resposta == 3:
-                    entidade = NPC()
-                    self.__BancodeNPCS.append(entidade)
-                    entidade.editorInicial()
-                    return entidade
-                
-                else:
-                    print("Essa opção não existe! Tente novamente.")
-                    time.sleep(1.5)
-                    os.system('cls')
-                    continue
+            if resposta == 0:
+                break
+
+            if resposta == 1:
+                entidade = Criatura()
+                self.__BancodeCriaturas.append(entidade)
+                entidade.editorInicial()
+                return entidade
             
-            except ValueError:
-                print("Escolha inválida, tente novamente!")
-                print("-"*50)
-                time.sleep(1.5)
-                os.system('cls')
-                continue
+            elif resposta == 2:
+                entidade = Jogador()
+                self.__BancodeJogadores.append(entidade)
+                entidade.editorInicial()
+                entidade.visualizaEntidade()
+                return entidade
+            
+            elif resposta == 3:
+                entidade = NPC()
+                self.__BancodeNPCS.append(entidade)
+                entidade.editorInicial()
+                return entidade
 
     def visualizaBiblioteca(self):
         while True:
-            try:
-                print("══════════════════════◄••❀••►══════════════════════")
-                escolha = int(input("Qual biblioteca você deseja visitar?\n[1] Campanhas\n[2] Entidades \n══════════════════════◄••❀••►══════════════════════\n>>"))
-                if escolha == 1:
-                    self.mostraColecaoCampanhas()
-                elif escolha == 2:
-                    while True:
+            
+            escolha = questionary.select(
+                "Qual biblioteca você deseja visitar?",
+                choices=[
+                    questionary.Choice("Campanhas", 1),
+                    questionary.Choice("Entidades", 2),
+                    questionary.Choice("Voltar", 0)
+                ],
+                qmark=" ",
+                instruction=" "
+            ).ask()
+
+            if escolha == 0:
+                break
+
+            if escolha == 1:
+                self.mostraColecaoCampanhas()
+            elif escolha == 2:
+                while True:
                         print("-"*65)
                         print("Biblioteca de Entidades:\n")
-                        try:
-                            escolha2 = int(input("[1] Criaturas \n[2] Jogadores \n[3] NPCs\nEscolha qual coleção você deseja ver:\n>>"))
-                            if escolha2 == 1:
-                                self.mostraColecao("Criaturas", self.__BancodeCriaturas)
-                            elif escolha2 == 2:
-                                self.mostraColecao("Jogadores", self.__BancodeJogadores)
-                            elif escolha2 == 3:
-                                self.mostraColecao("NPCs", self.__BancodeNPCS)
-                            else:
-                                print("Escolha incorreta! Vamos tentar de novo...")
-                                time.sleep(0.7)
-                                os.system('cls')
-                                continue
-                        except ValueError:
-                            print("Escolha incorreta! Vamos tentar de novo...")
-                            continue
-                            
-                        break
 
-            except ValueError:
-                print("Valor inválido! Tente novamente.")
-                continue
+                        escolha2 = questionary.select(
+                            "Escolha qual coleção você deseja ver:",
+                            choices=[
+                                questionary.Choice("Criaturas", 1),
+                                questionary.Choice("Jogadores", 2),
+                                questionary.Choice("NPCs", 3),
+                                questionary.Choice("Voltar", 0)
+                            ],
+                            qmark=" ",
+                            instruction=" "
+                        ).ask()
+
+                        if escolha2 == 1:
+                            self.mostraColecao("Criaturas", self.__BancodeCriaturas)
+                        elif escolha2 == 2:
+                            self.mostraColecao("Jogadores", self.__BancodeJogadores)
+                        elif escolha2 == 3:
+                            self.mostraColecao("NPCs", self.__BancodeNPCS)
 
     def escolheColecaoEntidade(self):
             print("◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥")
             while True:
-                try:
-                    decisao = int(input("Escolha uma coleção para editar:\n[1] Criaturas \n[2] Jogadores \n[3] NPCs\n>>"))
-                    if decisao == 1:
-                        colecao = self.__BancodeCriaturas
-                        self.escolheEntidadeEdicao(colecao)
-                    elif decisao == 2:
-                        colecao = self.__BancodeJogadores
-                        self.escolheEntidadeEdicao(colecao)
-                    elif decisao == 3:
-                        colecao = self.__BancodeNPCS
-                        self.escolheEntidadeEdicao(colecao)
-                    else:
-                        print("Escolha inválida, vamos tentar novamente.")
-                        time.sleep(0.8)
-                        os.system('cls')
+                decisao = questionary.select(
+                    "Escolha uma coleção para editar:",
+                    choices=[
+                        questionary.Choice("Criaturas", 1),
+                        questionary.Choice("Jogadores", 2),
+                        questionary.Choice("NPCs", 3),
+                        questionary.Choice("Voltar", 0)
+                    ],
+                    qmark=" ",
+                    instruction=" "
+                ).ask()
 
-                except ValueError:
-                    print("Você inseriu algo errado. Vamos tentar novamente.")
-                    continue
-                
-                break
+                if decisao == 0:
+                    break
+                if decisao == 1:
+                    colecao = self.__BancodeCriaturas
+                    self.escolheEntidadeEdicao(colecao)
+                elif decisao == 2:
+                    colecao = self.__BancodeJogadores
+                    self.escolheEntidadeEdicao(colecao)
+                elif decisao == 3:
+                    colecao = self.__BancodeNPCS
+                    self.escolheEntidadeEdicao(colecao)
+
             print("◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢")
             
     def escolheEntidadeEdicao(self, colecao):
         if len(colecao) == 0:
             print("A biblioteca em questão está vazia para alguma edição.")
-        else:
             time.sleep(1)
-            print("-"*50)
-            print("Quem você deseja editar?\n")
+        else:
+            opcoes = []
             contador = 0
             for i in colecao:
-                print(f"[{contador+1}]", i.mostraNome())
+                opcoes.append(questionary.Choice(i.mostraNome(), contador))
                 contador += 1
             
+            opcoes.append(questionary.Choice("Voltar", 0))
+            
             while True:
-                try:
-                    escolha = int(input(">> "))
-                    entidadeEscolhida = colecao[escolha-1]
-                    entidadeEscolhida.editaEntidade()
-                except ValueError:
-                    print("Opa, valor inválido, vamos tentar novamente.")
-                    continue
+                escolha = questionary.select(
+                    "Quem você deseja editar?",
+                    choices=opcoes,
+                    qmark=" ",
+                    instruction=" "
+                ).ask()
+
+                if escolha == 0:
+                    break 
+
+                entidadeEscolhida = colecao[escolha-1]
+                entidadeEscolhida.editaEntidade() 
+                #não sei pq entrou em algum looping aqui !VER DEPOIS!
 
     def EscolheEntidadeColecao(self):
             print("◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥")
-            while True:
+            while True: 
                 try:
                     decisao = int(input("Escolha uma coleção para excluir uma entidade:\n[1] Criaturas \n[2] Jogadores \n[3] NPCs\n>>"))
                     if decisao == 1:
