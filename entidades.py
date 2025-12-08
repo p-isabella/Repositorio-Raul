@@ -306,18 +306,20 @@ class Entidade():
         floats = {'_Deslocamento'}
 
         while True:
-            choices = [questionary.Choice(f"{label}: {('lista('+str(len(getattr(self, attr))+')') if isinstance(getattr(self, attr, None), list) else str(getattr(self, attr, None)))}", (label, attr)) for label, attr in campos]
+            # prepara opções com resumo dos valores
+            choices = []
+            for label, attr in campos:
+                val = getattr(self, attr, None)
+                resumo = f"lista({len(val)})" if isinstance(val, list) else str(val)
+                choices.append(questionary.Choice(f"{label}: {resumo}", (label, attr)))
             choices.append(questionary.Choice("Sair", None))
             escolha = questionary.select("Escolha o campo para editar:", choices=choices, qmark=" ", instruction=" ").ask()
-            if escolha is None:
+            
+            if escolha is None or not isinstance(escolha, tuple):
                 print("Saindo do editor.")
                 break
 
-            label_attr = escolha
-            if label_attr is None:
-                print("Saindo do editor.")
-                break
-            label, attr = label_attr
+            label, attr = escolha
             valor_atual = getattr(self, attr, None)
 
             # edição para listas
@@ -754,5 +756,6 @@ class Criatura(Entidade):
                 break
 
         print("Pronto. Ficha finalizada!")
+
 
 
