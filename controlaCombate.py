@@ -110,7 +110,7 @@ class ControlaCombate():
         
 
 #TESTE ORGANIZA INICIATIVA            
-combate = ControlaCombate()
+'''combate = ControlaCombate()
 combate._personagens_comb = ["Vi","Ekko","Jinx","Caitlyn"]
 combate._iniciativa = [1,5,20,14]
-combate.Combate()
+combate.Combate()'''

@@ -106,7 +106,7 @@ class Entidade():
         self._Iniciativa = iniciativa
 
     def mostraIniciativa(self):
-        return self._Turno
+        return self._Iniciativa
 
     # --------------------------------------------------------
     # Aqui, fiz funções para o BD futuramente:
@@ -266,7 +266,178 @@ class Entidade():
             break
              
     def editaEntidade(self):
-        pass
+        if getattr(self, '_deleted', False):
+            print("Não é possível editar: entidade já foi excluída.")
+            return
+        #check pra ve se a entidade nao foi excluida
+
+        #campos genericos
+        campos = [
+            ("Nome", '_Nome'),
+            ("História", '_Historia'),
+            ("Descrição física", '_DescricaoFisica'),
+            ("Vida máxima", '_VidaMax'),
+            ("Vida atual", '_VidaAtual'),
+            ("Deslocamento", '_Deslocamento'),
+            ("Força", '_Forca'),
+            ("Vigor", '_Vigor'),
+            ("Agilidade", '_Agilidade'),
+            ("Intelecto", '_Intelecto'),
+            ("Presença", '_Presenca'),
+            ("Defesa", '_Defesa'),
+            ("Turno", '_Turno')
+        ]
+
+        #campos das subclasses
+        if hasattr(self, '_Classe'):
+            campos.append(("Classe", '_Classe'))
+        if hasattr(self, '_NEX'):
+            campos.append(("NEX", '_NEX'))
+        if hasattr(self, '_NiveldeAmeaca'):
+            campos.append(("Nível de ameaça", '_NiveldeAmeaca'))
+        if hasattr(self, '_Inventario'):
+            campos.append(("Inventário", '_Inventario'))
+        if hasattr(self, '_Ataques'):
+            campos.append(("Ataques", '_Ataques'))
+
+        #atributos por tipo de dado
+        ints = {'_VidaMax', '_VidaAtual', '_Forca', '_Vigor', '_Agilidade', '_Intelecto', '_Presenca', '_Defesa', '_Turno', '_NEX', '_NiveldeAmeaca'}
+        floats = {'_Deslocamento'}
+
+        while True:
+            print('\n--- Editor de Entidade ---')
+            #printa os atributos e deixa o usuário escolher qual modificar
+            print(f"Entidade: {type(self).__name__} (ID {self.ID})")
+            for i, (label, attr) in enumerate(campos, start=1):
+                val = getattr(self, attr, None)
+                if isinstance(val, list):
+                    resumo = f"lista({len(val)})"
+                else:
+                    resumo = str(val)
+                print(f"{i}. {label}: {resumo}")
+            print("0. Sair do editor")
+
+            escolha = input("Escolha o número do campo para editar: ")
+            if not escolha.isdigit():
+                print("Entrada inválida — digite o número da opção.")
+                continue
+            escolha = int(escolha)
+            if escolha == 0:
+                print("Saindo do editor.")
+                break
+            if escolha < 0 or escolha > len(campos):
+                print("Opção fora do intervalo.")
+                continue
+
+            label, attr = campos[escolha - 1]
+            valor_atual = getattr(self, attr, None)
+
+            #edição pra ataques e inventario
+            if isinstance(valor_atual, list):
+                while True:
+                    print(f"\n-- Editando {label} --")
+                    if len(valor_atual) == 0:
+                        print("[vazio]")
+                    else:
+                        for idx, el in enumerate(valor_atual, start=1):
+                            print(f"{idx}. {el}")
+                    print("1. Adicionar elemento")
+                    print("2. Remover elemento por número")
+                    print("3. Limpar lista")
+                    print("4. Voltar")
+                    op = input("Escolha ação: ").lower()
+                    if op == '1':
+                        novo = input("Elemento a adicionar: ")
+                        valor_atual.append(novo)
+                        print("Elemento adicionado.")
+                    elif op == '2':
+                        idx = input("Número do elemento a remover: ")
+                        if not idx.isdigit():
+                            print("Entrada inválida.")
+                            continue
+                        idx = int(idx)
+                        if 1 <= idx <= len(valor_atual):
+                            removed = valor_atual.pop(idx - 1)
+                            print(f"Removido: {removed}")
+                        else:
+                            print("Índice fora do intervalo.")
+                    elif op == '3':
+                        confirm = input("Confirma limpar toda a lista? [s/N] ").lower()
+                        if confirm in ['s', 'sim']:
+                            valor_atual.clear()
+                            print("Lista limpa.")
+                    elif op == '4':
+                        break
+                    else:
+                        print("Opção inválida.")
+                # garante que o atributo atualizado seja persistido
+                setattr(self, attr, valor_atual)
+                continue
+
+            print(f"Valor atual de {label}: {valor_atual}")
+            novo = input(f"Novo valor para {label} (deixe vazio para cancelar): ")
+            if novo == '':
+                print("Edição cancelada.")
+                continue
+
+            #conversao de tipos pros atributos
+            try:
+                if attr in ints:
+                    novo_val = int(novo)
+                elif attr in floats:
+                    novo_val = float(novo)
+                else:
+                    novo_val = novo
+            except ValueError:
+                print("Formato inválido para o tipo esperado. Tente novamente.")
+                continue
+
+            setattr(self, attr, novo_val)
+            print(f"{label} atualizado para: {novo_val}")
+    
+    def excluiEntidade(self):
+
+        if getattr(self, 'deleted', False):
+            print("Esta entidade já foi excluída.")
+            return
+        #getattr pega o valor dos atributos de um obj
+
+        resposta = input(f"Deseja realmente excluir '{self.mostraNome()}' (ID {self.ID})? [s/N] ").lower()
+        if resposta not in ['s', 'sim']:
+            print("Exclusão cancelada.")
+            return
+
+        #campos genericos
+        atributos_para_limpar = [
+            '_Nome', '_Historia', '_DescricaoFisica', '_VidaMax', '_VidaAtual',
+            '_Deslocamento', '_Forca', '_Vigor', '_Agilidade', '_Intelecto',
+            '_Presenca', '_Defesa', '_Turno'
+        ]
+        for a in atributos_para_limpar:
+            if hasattr(self, a):
+                setattr(self, a, None)
+
+        #campos especificos
+        if hasattr(self, '_Inventario'):
+            try:
+                self._Inventario.clear()
+            except Exception:
+                self._Inventario = []
+        if hasattr(self, '_Ataques'):
+            try:
+                self._Ataques.clear()
+            except Exception:
+                self._Ataques = []
+        if hasattr(self, '_Classe'):
+            self._Classe = None
+        if hasattr(self, '_NEX'):
+            self._NEX = None
+        if hasattr(self, '_NiveldeAmeaca'):
+            self._NiveldeAmeaca = None
+
+        self.deleted = True
+        #atributo que indica se essa entidade foi excluida
+        print(f"Entidade '{type(self).__name__}' (ID {self.ID}) excluída com sucesso.")
 
 class Jogador(Entidade):
     def __init__(self):
@@ -570,180 +741,4 @@ class Criatura(Entidade):
                 break
 
         print("Pronto. Ficha finalizada!")
-
-    def editaEntidade(self):
-
-        if getattr(self, '_deleted', False):
-            print("Não é possível editar: entidade já foi excluída.")
-            return
-        #check pra ve se a entidade nao foi excluida
-
-        #campos genericos
-        campos = [
-            ("Nome", '_Nome'),
-            ("História", '_Historia'),
-            ("Descrição física", '_DescricaoFisica'),
-            ("Vida máxima", '_VidaMax'),
-            ("Vida atual", '_VidaAtual'),
-            ("Deslocamento", '_Deslocamento'),
-            ("Força", '_Forca'),
-            ("Vigor", '_Vigor'),
-            ("Agilidade", '_Agilidade'),
-            ("Intelecto", '_Intelecto'),
-            ("Presença", '_Presenca'),
-            ("Defesa", '_Defesa'),
-            ("Turno", '_Turno')
-        ]
-
-        #campos das subclasses
-        if hasattr(self, '_Classe'):
-            campos.append(("Classe", '_Classe'))
-        if hasattr(self, '_NEX'):
-            campos.append(("NEX", '_NEX'))
-        if hasattr(self, '_NiveldeAmeaca'):
-            campos.append(("Nível de ameaça", '_NiveldeAmeaca'))
-        if hasattr(self, '_Inventario'):
-            campos.append(("Inventário", '_Inventario'))
-        if hasattr(self, '_Ataques'):
-            campos.append(("Ataques", '_Ataques'))
-
-        #atributos por tipo de dado
-        ints = {'_VidaMax', '_VidaAtual', '_Forca', '_Vigor', '_Agilidade', '_Intelecto', '_Presenca', '_Defesa', '_Turno', '_NEX', '_NiveldeAmeaca'}
-        floats = {'_Deslocamento'}
-
-        while True:
-            print('\n--- Editor de Entidade ---')
-            #printa os atributos e deixa o usuário escolher qual modificar
-            print(f"Entidade: {type(self).__name__} (ID {self.ID})")
-            for i, (label, attr) in enumerate(campos, start=1):
-                val = getattr(self, attr, None)
-                if isinstance(val, list):
-                    resumo = f"lista({len(val)})"
-                else:
-                    resumo = str(val)
-                print(f"{i}. {label}: {resumo}")
-            print("0. Sair do editor")
-
-            escolha = input("Escolha o número do campo para editar: ")
-            if not escolha.isdigit():
-                print("Entrada inválida — digite o número da opção.")
-                continue
-            escolha = int(escolha)
-            if escolha == 0:
-                print("Saindo do editor.")
-                break
-            if escolha < 0 or escolha > len(campos):
-                print("Opção fora do intervalo.")
-                continue
-
-            label, attr = campos[escolha - 1]
-            valor_atual = getattr(self, attr, None)
-
-            #edição pra ataques e inventario
-            if isinstance(valor_atual, list):
-                while True:
-                    print(f"\n-- Editando {label} --")
-                    if len(valor_atual) == 0:
-                        print("[vazio]")
-                    else:
-                        for idx, el in enumerate(valor_atual, start=1):
-                            print(f"{idx}. {el}")
-                    print("1. Adicionar elemento")
-                    print("2. Remover elemento por número")
-                    print("3. Limpar lista")
-                    print("4. Voltar")
-                    op = input("Escolha ação: ").lower()
-                    if op == '1':
-                        novo = input("Elemento a adicionar: ")
-                        valor_atual.append(novo)
-                        print("Elemento adicionado.")
-                    elif op == '2':
-                        idx = input("Número do elemento a remover: ")
-                        if not idx.isdigit():
-                            print("Entrada inválida.")
-                            continue
-                        idx = int(idx)
-                        if 1 <= idx <= len(valor_atual):
-                            removed = valor_atual.pop(idx - 1)
-                            print(f"Removido: {removed}")
-                        else:
-                            print("Índice fora do intervalo.")
-                    elif op == '3':
-                        confirm = input("Confirma limpar toda a lista? [s/N] ").lower()
-                        if confirm in ['s', 'sim']:
-                            valor_atual.clear()
-                            print("Lista limpa.")
-                    elif op == '4':
-                        break
-                    else:
-                        print("Opção inválida.")
-                # garante que o atributo atualizado seja persistido
-                setattr(self, attr, valor_atual)
-                continue
-
-            print(f"Valor atual de {label}: {valor_atual}")
-            novo = input(f"Novo valor para {label} (deixe vazio para cancelar): ")
-            if novo == '':
-                print("Edição cancelada.")
-                continue
-
-            #conversao de tipos pros atributos
-            try:
-                if attr in ints:
-                    novo_val = int(novo)
-                elif attr in floats:
-                    novo_val = float(novo)
-                else:
-                    novo_val = novo
-            except ValueError:
-                print("Formato inválido para o tipo esperado. Tente novamente.")
-                continue
-
-            setattr(self, attr, novo_val)
-            print(f"{label} atualizado para: {novo_val}")
-
-    def excluiEntidade(self):
-
-        if getattr(self, 'deleted', False):
-            print("Esta entidade já foi excluída.")
-            return
-        #getattr pega o valor dos atributos de um obj
-
-        resposta = input(f"Deseja realmente excluir '{self.mostraNome()}' (ID {self.ID})? [s/N] ").lower()
-        if resposta not in ['s', 'sim']:
-            print("Exclusão cancelada.")
-            return
-
-        #campos genericos
-        atributos_para_limpar = [
-            '_Nome', '_Historia', '_DescricaoFisica', '_VidaMax', '_VidaAtual',
-            '_Deslocamento', '_Forca', '_Vigor', '_Agilidade', '_Intelecto',
-            '_Presenca', '_Defesa', '_Turno'
-        ]
-        for a in atributos_para_limpar:
-            if hasattr(self, a):
-                setattr(self, a, None)
-
-        #campos especificos
-        if hasattr(self, '_Inventario'):
-            try:
-                self._Inventario.clear()
-            except Exception:
-                self._Inventario = []
-        if hasattr(self, '_Ataques'):
-            try:
-                self._Ataques.clear()
-            except Exception:
-                self._Ataques = []
-        if hasattr(self, '_Classe'):
-            self._Classe = None
-        if hasattr(self, '_NEX'):
-            self._NEX = None
-        if hasattr(self, '_NiveldeAmeaca'):
-            self._NiveldeAmeaca = None
-
-        self.deleted = True
-        #atributo que indica se essa entidade foi excluida
-        print(f"Entidade '{type(self).__name__}' (ID {self.ID}) excluída com sucesso.")
-
 

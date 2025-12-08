@@ -14,11 +14,23 @@ teste = Entidade()
 
 class BancoDeDados():
 
-    __BancodeCampanhas = ["campanha1", "campanha2"]
+    __BancodeCampanhas = []
     __BancodeNPCS = []
     __BancodeCriaturas = []
     __BancodeJogadores = []
 
+    def obtemNPCs(self):
+        return self.__BancodeNPCS
+    
+    def obtemCriaturas(self):
+        return self.__BancodeCriaturas
+    
+    def obtemJogadores(self):
+        return self.__BancodeJogadores
+
+    def obtemCampanhas(self):
+        return self.__BancodeCampanhas
+    
     def mostraColecao(self, nome, lista):
         while True:
             os.system('cls')
@@ -186,7 +198,7 @@ class BancoDeDados():
             time.sleep(1)
         else:
             opcoes = []
-            contador = 0
+            contador = 1
             for i in colecao:
                 opcoes.append(questionary.Choice(i.mostraNome(), contador))
                 contador += 1
@@ -242,7 +254,7 @@ class BancoDeDados():
             print("A biblioteca em questão está vazia para alguma edição.")
         else:
             opcoes = []
-            contador = 0
+            contador = 1
             for i in colecao:
                 opcoes.append(questionary.Choice(i.mostraNome(), contador))
                 contador += 1
@@ -262,9 +274,48 @@ class BancoDeDados():
             entidadeEscolhida = colecao[escolha-1]
             entidadeEscolhida.removeEntidade() #função remove ainda não foi feita
 
-    def removeEntidade(entidadeEscolhida):
-        pass
-        
+    def excluiEntidade(self):
+        if getattr(self, 'deleted', False):
+            print("Esta entidade já foi excluída.")
+            return
+        #getattr pega o valor dos atributos de um obj
+
+        resposta = input(f"Deseja realmente excluir '{self.mostraNome()}' (ID {self.ID})? [s/N] ").lower()
+        if resposta not in ['s', 'sim']:
+            print("Exclusão cancelada.")
+            return
+
+        #campos genericos
+        atributos_para_limpar = [
+            '_Nome', '_Historia', '_DescricaoFisica', '_VidaMax', '_VidaAtual',
+            '_Deslocamento', '_Forca', '_Vigor', '_Agilidade', '_Intelecto',
+            '_Presenca', '_Defesa', '_Turno'
+        ]
+        for a in atributos_para_limpar:
+            if hasattr(self, a):
+                setattr(self, a, None)
+
+        #campos especificos
+        if hasattr(self, '_Inventario'):
+            try:
+                self._Inventario.clear()
+            except Exception:
+                self._Inventario = []
+        if hasattr(self, '_Ataques'):
+            try:
+                self._Ataques.clear()
+            except Exception:
+                self._Ataques = []
+        if hasattr(self, '_Classe'):
+            self._Classe = None
+        if hasattr(self, '_NEX'):
+            self._NEX = None
+        if hasattr(self, '_NiveldeAmeaca'):
+            self._NiveldeAmeaca = None
+
+        self.deleted = True
+        #atributo que indica se essa entidade foi excluida
+        print(f"Entidade '{type(self).__name__}' (ID {self.ID}) excluída com sucesso.")
 
     def confirmacao(self):
         while True:
@@ -286,14 +337,6 @@ class BancoDeDados():
             elif confirma == 2:
                 return False
 
-    def obtemNPCs(self):
-        return self.__BancodeNPCS
-    
-    def obtemCriaturas(self):
-        return self.__BancodeCriaturas
-    
-    def obtemJogadores(self):
-        return self.__BancodeJogadores
 
 bd = BancoDeDados()
 dadostestesBD(bd)
