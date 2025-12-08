@@ -276,49 +276,7 @@ class BancoDeDados():
                 entidadeEscolhida.excluiEntidade(confirmar=True)
             except TypeError:
                 entidadeEscolhida.excluiEntidade()
-
-    def excluiEntidade(self):
-        if getattr(self, 'deleted', False):
-            print("Esta entidade já foi excluída.")
-            return
-        #getattr pega o valor dos atributos de um obj
-
-        resposta = input(f"Deseja realmente excluir '{self.mostraNome()}' (ID {self.ID})? [s/N] ").lower()
-        if resposta not in ['s', 'sim']:
-            print("Exclusão cancelada.")
-            return
-
-        #campos genericos
-        atributos_para_limpar = [
-            '_Nome', '_Historia', '_DescricaoFisica', '_VidaMax', '_VidaAtual',
-            '_Deslocamento', '_Forca', '_Vigor', '_Agilidade', '_Intelecto',
-            '_Presenca', '_Defesa', '_Turno'
-        ]
-        for a in atributos_para_limpar:
-            if hasattr(self, a):
-                setattr(self, a, None)
-
-        #campos especificos
-        if hasattr(self, '_Inventario'):
-            try:
-                self._Inventario.clear()
-            except Exception:
-                self._Inventario = []
-        if hasattr(self, '_Ataques'):
-            try:
-                self._Ataques.clear()
-            except Exception:
-                self._Ataques = []
-        if hasattr(self, '_Classe'):
-            self._Classe = None
-        if hasattr(self, '_NEX'):
-            self._NEX = None
-        if hasattr(self, '_NiveldeAmeaca'):
-            self._NiveldeAmeaca = None
-
-        self.deleted = True
-        #atributo que indica se essa entidade foi excluida
-        print(f"Entidade '{type(self).__name__}' (ID {self.ID}) excluída com sucesso.")
+            #pega o excluiEntidade do entidades
 
     def confirmacao(self):
         while True:
@@ -346,4 +304,5 @@ dadostestesBD(bd)
 
 if __name__ == "__main__":
     bd.escolheColecaoEntidade()
+
 
