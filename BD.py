@@ -272,7 +272,10 @@ class BancoDeDados():
                 break
 
             entidadeEscolhida = colecao[escolha-1]
-            entidadeEscolhida.removeEntidade() #função remove ainda não foi feita
+            try:
+                entidadeEscolhida.excluiEntidade(confirmar=True)
+            except TypeError:
+                entidadeEscolhida.excluiEntidade()
 
     def excluiEntidade(self):
         if getattr(self, 'deleted', False):
@@ -343,3 +346,4 @@ dadostestesBD(bd)
 
 if __name__ == "__main__":
     bd.escolheColecaoEntidade()
+
