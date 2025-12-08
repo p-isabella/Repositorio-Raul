@@ -266,6 +266,7 @@ class Entidade():
             break
              
     def editaEntidade(self):
+
         if getattr(self, '_deleted', False):
             print("Não é possível editar: entidade já foi excluída.")
             return
@@ -305,82 +306,60 @@ class Entidade():
         floats = {'_Deslocamento'}
 
         while True:
-            print('\n--- Editor de Entidade ---')
-            #printa os atributos e deixa o usuário escolher qual modificar
-            print(f"Entidade: {type(self).__name__} (ID {self.ID})")
-            for i, (label, attr) in enumerate(campos, start=1):
-                val = getattr(self, attr, None)
-                if isinstance(val, list):
-                    resumo = f"lista({len(val)})"
-                else:
-                    resumo = str(val)
-                print(f"{i}. {label}: {resumo}")
-            print("0. Sair do editor")
-
-            escolha = input("Escolha o número do campo para editar: ")
-            if not escolha.isdigit():
-                print("Entrada inválida — digite o número da opção.")
-                continue
-            escolha = int(escolha)
-            if escolha == 0:
+            choices = [questionary.Choice(f"{label}: {('lista('+str(len(getattr(self, attr))+')') if isinstance(getattr(self, attr, None), list) else str(getattr(self, attr, None)))}", (label, attr)) for label, attr in campos]
+            choices.append(questionary.Choice("Sair", None))
+            escolha = questionary.select("Escolha o campo para editar:", choices=choices, qmark=" ", instruction=" ").ask()
+            if escolha is None:
                 print("Saindo do editor.")
                 break
-            if escolha < 0 or escolha > len(campos):
-                print("Opção fora do intervalo.")
-                continue
 
-            label, attr = campos[escolha - 1]
+            label_attr = escolha
+            if label_attr is None:
+                print("Saindo do editor.")
+                break
+            label, attr = label_attr
             valor_atual = getattr(self, attr, None)
 
-            #edição pra ataques e inventario
+            # edição para listas
             if isinstance(valor_atual, list):
                 while True:
-                    print(f"\n-- Editando {label} --")
-                    if len(valor_atual) == 0:
-                        print("[vazio]")
-                    else:
-                        for idx, el in enumerate(valor_atual, start=1):
-                            print(f"{idx}. {el}")
-                    print("1. Adicionar elemento")
-                    print("2. Remover elemento por número")
-                    print("3. Limpar lista")
-                    print("4. Voltar")
-                    op = input("Escolha ação: ").lower()
-                    if op == '1':
-                        novo = input("Elemento a adicionar: ")
-                        valor_atual.append(novo)
-                        print("Elemento adicionado.")
-                    elif op == '2':
-                        idx = input("Número do elemento a remover: ")
-                        if not idx.isdigit():
-                            print("Entrada inválida.")
-                            continue
-                        idx = int(idx)
-                        if 1 <= idx <= len(valor_atual):
-                            removed = valor_atual.pop(idx - 1)
-                            print(f"Removido: {removed}")
-                        else:
-                            print("Índice fora do intervalo.")
-                    elif op == '3':
-                        confirm = input("Confirma limpar toda a lista? [s/N] ").lower()
-                        if confirm in ['s', 'sim']:
+                    lista_choices = [questionary.Choice(str(el), idx) for idx, el in enumerate(valor_atual, start=1)]
+                    lista_choices.append(questionary.Choice("Adicionar elemento", 'add'))
+                    lista_choices.append(questionary.Choice("Limpar lista", 'clear'))
+                    lista_choices.append(questionary.Choice("Voltar", 'back'))
+                    sel = questionary.select(f"Editando {label}:", choices=lista_choices, qmark=" ", instruction=" ").ask()
+                    if sel == 'add':
+                        novo = questionary.text("Elemento a adicionar:").ask()
+                        if novo:
+                            valor_atual.append(novo)
+                            print("Elemento adicionado.")
+                        continue
+                    if sel == 'clear':
+                        confirma = questionary.confirm("Confirma limpar toda a lista?").ask()
+                        if confirma:
                             valor_atual.clear()
                             print("Lista limpa.")
-                    elif op == '4':
+                        continue
+                    if sel == 'back' or sel is None:
                         break
+                    try:
+                        idx = int(sel)
+                    except Exception:
+                        idx = sel
+                    if isinstance(idx, int) and 1 <= idx <= len(valor_atual):
+                        removed = valor_atual.pop(idx-1)
+                        print(f"Removido: {removed}")
                     else:
-                        print("Opção inválida.")
-                # garante que o atributo atualizado seja persistido
+                        print("Índice fora do intervalo.")
                 setattr(self, attr, valor_atual)
                 continue
 
-            print(f"Valor atual de {label}: {valor_atual}")
-            novo = input(f"Novo valor para {label} (deixe vazio para cancelar): ")
-            if novo == '':
+            # edição de valores escalares
+            novo = questionary.text(f"Novo valor para {label}:", default=str(valor_atual) if valor_atual is not None else "").ask()
+            if novo is None or novo == '':
                 print("Edição cancelada.")
                 continue
 
-            #conversao de tipos pros atributos
             try:
                 if attr in ints:
                     novo_val = int(novo)
@@ -397,13 +376,21 @@ class Entidade():
     
     def excluiEntidade(self):
 
-        if getattr(self, 'deleted', False):
+        if getattr(self, '_deleted', False):
             print("Esta entidade já foi excluída.")
             return
         #getattr pega o valor dos atributos de um obj
 
-        resposta = input(f"Deseja realmente excluir '{self.mostraNome()}' (ID {self.ID})? [s/N] ").lower()
-        if resposta not in ['s', 'sim']:
+        escolha = questionary.select(
+            f"Deseja realmente excluir '{self.mostraNome()}' (ID {self.ID})?",
+            choices=[
+                questionary.Choice("Sim", True),
+                questionary.Choice("Não", False)
+            ],
+            qmark=" ",
+            instruction=" "
+        ).ask()
+        if not escolha:
             print("Exclusão cancelada.")
             return
 
@@ -435,8 +422,34 @@ class Entidade():
         if hasattr(self, '_NiveldeAmeaca'):
             self._NiveldeAmeaca = None
 
-        self.deleted = True
-        #atributo que indica se essa entidade foi excluida
+        #parte que tira do BD se a entidade estiver la
+        try:
+            import BD
+            bd = getattr(BD, 'bd', None)
+            if bd is not None:
+                try:
+                    colecao = bd.obtemCriaturas()
+                    if self in colecao:
+                        colecao.remove(self)
+                except Exception:
+                    pass
+                try:
+                    colecao = bd.obtemJogadores()
+                    if self in colecao:
+                        colecao.remove(self)
+                except Exception:
+                    pass
+                try:
+                    colecao = bd.obtemNPCs()
+                    if self in colecao:
+                        colecao.remove(self)
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        self._deleted = True
+        # atributo que indica se essa entidade foi excluida
         print(f"Entidade '{type(self).__name__}' (ID {self.ID}) excluída com sucesso.")
 
 class Jogador(Entidade):
@@ -741,4 +754,5 @@ class Criatura(Entidade):
                 break
 
         print("Pronto. Ficha finalizada!")
+
 
