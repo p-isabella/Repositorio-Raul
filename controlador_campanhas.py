@@ -14,8 +14,8 @@ class ControladorDeCampanha():
             turnoMenu = campanhaAtual.turnoAtual
             os.system('cls')
             print(f'════════════{campanhaAtual.obtemNome().upper}══════════════')
+            print(f'ID Campanha: {campanhaAtual.obtemID()}')
             print(f'Iniciativa: {iniciativaMenu}')
-            print(f'Turno: {turnoMenu}') #acho que seria legal bota aqui tbm quem vai joga nesse turno
             print('══════════════════════════════════════════════════════════════')
 
             escolha = questionary.select(
