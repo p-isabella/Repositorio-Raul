@@ -61,7 +61,7 @@ class Campanha():
             print("Essa entidade não está na campanha")
 
     def listaEntidadeCamp(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls')
         if not self._EntidadesCampanha:
             print("Não há entidades na campanha")
         else:
@@ -73,7 +73,7 @@ class Campanha():
     
     def importarBanco(self):
         while True:
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system('cls')
             escolha = questionary.select(
                 "Escolha qual banco de dados quer acessar:",
                 choices=[
@@ -148,4 +148,5 @@ class Campanha():
                 
                 if entidade_escolhida:
                     self.removeEntidadeCapamanha(entidade_escolhida)
+
                     input("\nPressione [Enter]")
