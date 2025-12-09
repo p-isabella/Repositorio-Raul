@@ -11,11 +11,11 @@ class ControladorDeCampanha():
     def MenuPrincipal(self, campanhaAtual):
         while True:
             iniciativaMenu = campanhaAtual.iniciativaAtual
-            turnoMenu = campanhaAtual.turnoAtual
+            turnoMenu = 1
             os.system('cls')
             print(f'════════════{campanhaAtual.obtemNome().upper}══════════════')
             print(f'Iniciativa: {iniciativaMenu}')
-            print(f'Turno: {turnoMenu}') #acho que seria legal bota aqui tbm quem vai joga nesse turno
+            print(f'Turno: {turnoMenu}')
             print('══════════════════════════════════════════════════════════════')
 
             escolha = questionary.select(
@@ -35,19 +35,7 @@ class ControladorDeCampanha():
 
             if escolha == '1':
                 os.system('cls')
-                print(f'══════Editar Turno══════')
-                print(f'\nTurno atual: {turnoMenu}')
-                
-                novo_turno = questionary.text(
-                    "Novo valor:",
-                    validate=lambda text: text.isdigit() and int(text) >= 0 or "Número inválido.",
-                qmark=" ",
-                instruction=" "
-                ).ask()
-                
-                if novo_turno:
-                    campanhaAtual.turnoAtual = int(novo_turno)
-                    print("Atualizado.")
+                print(f'Oops, parece que o turno não pode ser editado...')
                 time.sleep(1)
                    
             elif escolha == '2':
@@ -158,20 +146,6 @@ class ControladorDeCampanha():
                     elif acao_init == '0':
                         break
                 campanhaAtual.iniciativaAtual = iniciativaMenu
-
-                novo_turno = questionary.text(
-                    "Digite o novo valor para o Turno:",
-                    validate=lambda text: text.isdigit() and int(text) >= 0 or "Por favor, digite um número inteiro não negativo.",
-                    qmark=" "
-                ).ask()
-                
-                if novo_turno is not None:
-                    try:
-                        turnoMenu = int(novo_turno)
-                        print(f"Turno atualizado para: {turnoMenu}")
-                    except ValueError:
-                        print("Erro: Valor inserido inválido.")
-                time.sleep(1.5)
             
             elif escolha == '3':
                 campanhaAtual.importarBanco()
@@ -433,3 +407,4 @@ class ControladorDeCampanha():
 
 if __name__ == "__main__":
     main()'''
+
