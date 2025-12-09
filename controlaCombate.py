@@ -13,12 +13,6 @@ class ControlaCombate():
         self._qtd_jogadores = len(self._personagens_comb)
         self._iniciativa = []
 
-    def addPersonagemComb(self, entidade):
-        self._personagens_comb.append(entidade)
-    
-    def removerPersonagemComb(self, entidade):
-        self._personagens_comb.remove(entidade)
-
     def OrganizaIniciativa(self):
 
         if not self._personagens_comb or not self._iniciativa:

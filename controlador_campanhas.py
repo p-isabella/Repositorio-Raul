@@ -11,16 +11,17 @@ class ControladorDeCampanha():
     def MenuPrincipal(self, campanhaAtual):
         while True:
             iniciativaMenu = campanhaAtual.iniciativaAtual
-            turnoMenu = campanhaAtual.turnoAtual
+            turnoMenu = 1
             os.system('cls')
             print(f'════════════{campanhaAtual.obtemNome().upper}══════════════')
-            print(f'ID Campanha: {campanhaAtual.obtemID()}')
             print(f'Iniciativa: {iniciativaMenu}')
+            print(f'Turno: {turnoMenu}')
             print('══════════════════════════════════════════════════════════════')
 
             escolha = questionary.select(
                 "Escolha uma opção",
                 choices=[
+                    questionary.Choice(title='Editar Quantidade de Turnos', value='1'), 
                     questionary.Choice(title='Editar Iniciativa', value='2'),
                     questionary.Choice(title='Adicionar/Remover Entidades', value='3'), 
                     questionary.Choice(title='Listar Entidades', value='4'), 
@@ -31,8 +32,13 @@ class ControladorDeCampanha():
                 instruction=" ",
                 qmark=" "
             ).ask()
- 
-            if escolha == '2':
+
+            if escolha == '1':
+                os.system('cls')
+                print(f'Oops, parece que o turno não pode ser editado...')
+                time.sleep(1)
+                   
+            elif escolha == '2':
                 while True:
                     os.system('cls')
                     print(f'--- Editar Iniciativa ---')
@@ -140,20 +146,6 @@ class ControladorDeCampanha():
                     elif acao_init == '0':
                         break
                 campanhaAtual.iniciativaAtual = iniciativaMenu
-
-                novo_turno = questionary.text(
-                    "Digite o novo valor para o Turno:",
-                    validate=lambda text: text.isdigit() and int(text) >= 0 or "Por favor, digite um número inteiro não negativo.",
-                    qmark=" "
-                ).ask()
-                
-                if novo_turno is not None:
-                    try:
-                        turnoMenu = int(novo_turno)
-                        print(f"Turno atualizado para: {turnoMenu}")
-                    except ValueError:
-                        print("Erro: Valor inserido inválido.")
-                time.sleep(1.5)
             
             elif escolha == '3':
                 campanhaAtual.importarBanco()
@@ -162,51 +154,8 @@ class ControladorDeCampanha():
             elif escolha == '5':
                 from controlaCombate import ControlaCombate
                 cc = ControlaCombate()
-
-                resposta = questionary.select(
-                    "Você quer adicionar ou remover uma Entidade?",
-                    choices=[
-                        questionary.Choice(title="Adicionar Entidade", value='1'),
-                        questionary.Choice(title="Remover Entidade", value='2'),
-                        questionary.Choice(title="Cancelar", value='0')
-                    ],
-                    instruction=" ",
-                    qmark=" "
-                ).ask()
-
-                if resposta == '1':
-                    entidadesCombate = [questionary.Choice(entidade.mostraNome(), entidade) for entidade in campanhaAtual._EntidadesCampanha]
-                    entidadesCombate.append(questionary.Choice("Voltar", None))
-                    
-                    entidadesCombate = questionary.select(
-                        "Quem você quer adicionar ao combate?",
-                        choices=entidadesCombate,
-                        qmark=" ",
-                        instruction=" "
-                    ).ask()
-
-                    if entidadesCombate:
-                        cc.addPersonagemComb.append(entidadesCombate)
-                        input("\nPressione [Enter]")
-                
-                if resposta == '2':
-                    entidadesCombate = [questionary.Choice(entidade.mostraNome(), entidade) for entidade in campanhaAtual._EntidadesCampanha]
-                    entidadesCombate.append(questionary.Choice("Voltar", None))
-                    
-                    entidadesCombate = questionary.select(
-                        "Quem você quer remover do combate?",
-                        choices=entidadesCombate,
-                        qmark=" ",
-                        instruction=" "
-                    ).ask()
-
-                    if entidadesCombate:
-                        cc.removerPersonagemComb.append(entidadesCombate)
-                        input("\nPressione [Enter]")                   
-                
-                if resposta == '0':
-                    break
-                
+                cc._personagens_comb = campanhaAtual._EntidadesCampanha.copy()
+                cc.Combate()
             elif escolha == '6':
                 while True:
                     os.system('cls')
@@ -458,3 +407,4 @@ class ControladorDeCampanha():
 
 if __name__ == "__main__":
     main()'''
+

@@ -16,6 +16,7 @@ class Campanha():
         self._Historia = "Campanha sem história"
         self._EntidadesCampanha = []
         self.iniciativaAtual = []
+        self.turnoAtual = 0
 
     #construtores classe campanha
     def obtemID(self):
@@ -32,9 +33,6 @@ class Campanha():
     
     def atribuiHistoria(self, histCampanha):
         self._Historia = histCampanha
-    
-    def obtemInicativa(self):
-        return self.obtemInicativa
 
     #métodos da classe cammpanha
     def editarNomeCampanha(self):
@@ -150,4 +148,5 @@ class Campanha():
                 
                 if entidade_escolhida:
                     self.removeEntidadeCapamanha(entidade_escolhida)
+
                     input("\nPressione [Enter]")
