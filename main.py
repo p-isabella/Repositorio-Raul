@@ -39,7 +39,7 @@ def main():
             if not campanhas:
                 controlador.criarCampanha()
             else: 
-                opcaoCampanha = questionary.select("Campanhas", choices=["Criar Nova", "Carregar Existente", "Deletar Campanha", "Voltar"], qmark=" ", instruction=" ").ask()
+                opcaoCampanha = questionary.select("Campanhas", choices=["Criar Nova", "Visualizar Existente", "Deletar Campanha", "Voltar"], qmark=" ", instruction=" ").ask()
                 if opcaoCampanha == "Criar Nova":
                     controlador.criarCampanha()
                 elif opcaoCampanha == "Carregar Existente":
@@ -48,8 +48,9 @@ def main():
                     controlador.DeletaCampanha()
                 
         elif escolha == "Combate":
-            controlaCombate = ControlaCombate()
-            controlaCombate.Combate()
+            campanha = controlador.buscaCampanha()
+            controlador.MenuPrincipal(campanha)
+
             
         elif escolha == "Sair":
             break

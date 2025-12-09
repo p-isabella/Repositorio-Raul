@@ -263,7 +263,7 @@ class ControladorDeCampanha():
         ).ask()
 
         if escolha:
-            
+          
             self.MenuPrincipal(escolha)
         
         else:
@@ -449,7 +449,24 @@ class ControladorDeCampanha():
         combate = ControlaCombate()
         combate.menuCombate()
 
+    def buscaCampanha(self):
+        os.system('cls')
+        campanhas = bd.obtemCampanhas()
 
+        if not campanhas:
+            print("Nenhuma campanha disponível.")
+            time.sleep(1)
+            return
+
+        opcoes = [questionary.Choice(c.obtemNome(), c) for c in campanhas] 
+        opcoes.append(questionary.Choice("Voltar"))
+        escolha = questionary.select(
+            "Escolha a campanha:", 
+            choices=opcoes,
+            qmark=" ",
+            instruction=" "
+        ).ask()
+        
 #testes
 '''def main():
     controlador = ControladorDeCampanha()
