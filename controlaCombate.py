@@ -89,6 +89,9 @@ class ControlaCombate():
     def addAoCombate(self,entidade):
         self._personagens_comb.append(entidade)
 
+    def removeDoCombate(self, entidade):
+        self._personagens_comb.remove(entidade)
+
     def Combate(self):
 
         ordem_jogada = self.OrganizaIniciativa()
