@@ -1,4 +1,5 @@
 from entidades import NPC, Jogador, Criatura
+from campanha import Campanha
 
 def dadostestesBD(bd):
     c1 = Criatura()
@@ -52,3 +53,10 @@ def dadostestesBD(bd):
     j1.inserePresenca(1)
     j1.insereVigor(2)
     bd._BancoDeDados__BancodeJogadores.append(j1)
+
+    camp1 = Campanha()
+    camp1.atribuiNome("Ordem Paranormal")
+    camp1.atribuiHistoria("Um grupo da ordem é chamado para investigar um incêndio em uma escola")
+    camp1.iniciativaAtual = []
+    camp1.turnoAtual = 0
+    bd._BancoDeDados__BancodeCampanhas.append(camp1)

@@ -4,7 +4,6 @@ from entidades import NPC
 from entidades import Criatura
 from entidades import Jogador
 from entidades import Entidade
-from dadostestes import dadostestesBD
 import os
 import time
 import questionary
@@ -219,7 +218,6 @@ class BancoDeDados():
 
                 entidadeEscolhida = colecao[escolha-1]
                 entidadeEscolhida.editaEntidade() 
-                #não sei pq entrou em algum looping aqui !VER DEPOIS!
 
     def EscolheEntidadeColecao(self):
             print("◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥◤◢◤◢◣◥◣◥")
@@ -276,7 +274,6 @@ class BancoDeDados():
                 entidadeEscolhida.excluiEntidade(confirmar=True)
             except TypeError:
                 entidadeEscolhida.excluiEntidade()
-            #pega o excluiEntidade do entidades
 
     def confirmacao(self):
         while True:
@@ -298,11 +295,4 @@ class BancoDeDados():
             elif confirma == 2:
                 return False
 
-
 bd = BancoDeDados()
-dadostestesBD(bd)
-
-if __name__ == "__main__":
-    bd.escolheColecaoEntidade()
-
-

@@ -15,6 +15,8 @@ class Campanha():
         self._Nome = "Campanha sem nome"
         self._Historia = "Campanha sem história"
         self._EntidadesCampanha = []
+        self.iniciativaAtual = []
+        self.turnoAtual = 0
 
     #construtores classe campanha
     def obtemID(self):
@@ -59,10 +61,9 @@ class Campanha():
             print("Essa entidade não está na campanha")
 
     def listaEntidadeCamp(self):
-        os.system('cls')
+        os.system('cls' if os.name == 'nt' else 'clear')
         if not self._EntidadesCampanha:
             print("Não há entidades na campanha")
-            return None
         else:
             print(f"Entidades em {self._Nome}:")
             for ent in self._EntidadesCampanha:
@@ -72,7 +73,7 @@ class Campanha():
     
     def importarBanco(self):
         while True:
-            os.system('cls')
+            os.system('cls' if os.name == 'nt' else 'clear')
             escolha = questionary.select(
                 "Escolha qual banco de dados quer acessar:",
                 choices=[
@@ -99,65 +100,52 @@ class Campanha():
                 print("Banco vazio.")
                 time.sleep(1)
                 continue
-
-            opcoes = [questionary.Choice(entidade.mostraNome(), entidade) for entidade in listaBancos]
-            entidade_escolhida = questionary.select(
-                "Quem adicionar?",
-                choices=opcoes,
-                qmark=" ",
-                instruction=" "
-            ).ask()
             
-            if entidade_escolhida:
-                self.addEntidadeCampanha(entidade_escolhida)
-                input("Pressione Enter...")
-
-    def menuCampanha(self):
-        while True:
-            os.system('cls')
-            print(f'═══════════════════ {self._Nome.upper()} ════════════════════')
-            print(f'ID Campanha: {self.IDcampanha}')
-            print(f'História: {self._Historia}')
-            print("══════════════════════════════════════════════════════════════")
-
-            escolha = questionary.select(
-                "Escolha uma opção",
+            resposta = questionary.select(
+                "Você quer adicionar ou remover uma Entidade?",
                 choices=[
-                    questionary.Choice(title='Editar Nome', value='1'), 
-                    questionary.Choice(title='Editar História', value='2'),
-                    questionary.Choice(title='Listar Entidades', value='3'), 
-                    questionary.Choice(title='Adicionar Entidades na Campanha', value='4'),
-                    questionary.Choice(title='Voltar ao Menu Principal', value='0'),
+                    questionary.Choice(title="Adicionar Entidade", value='1'),
+                    questionary.Choice(title="Remover Entidade", value='2'),
+                    questionary.Choice(title="Cancelar", value='0')
                 ],
                 instruction=" ",
                 qmark=" "
             ).ask()
 
-            if escolha == '1':
-                self.editarNomeCampanha()
-            elif escolha == '2':
-                self.editarHistCampanha()
-            elif escolha == '3':
-                self.listaEntidadeCamp()
-            elif escolha == '4':
-                self.importarBanco()
-            elif escolha == '0':
-                break
+            if resposta == '0':
+                continue
 
-def criarCampanha():
-    os.system('cls')
-    nomeCampanha = questionary.text("Qual o nome da campanha?").ask()
-    histCampanha = questionary.text("Qual a história da sua campanha?").ask()
+            if resposta == '1': 
+                opcoes = [questionary.Choice(entidade.mostraNome(), entidade) for entidade in listaBancos]
+                opcoes.append(questionary.Choice("Voltar", None))
+                
+                entidade_escolhida = questionary.select(
+                    "Quem você quer adicionar?",
+                    choices=opcoes,
+                    qmark=" ",
+                    instruction=" "
+                ).ask()
+                
+                if entidade_escolhida:
+                    self.addEntidadeCampanha(entidade_escolhida)
+                    input("\nPressione [Enter]")
+            
+            if resposta == '2':
+                if not self._EntidadesCampanha:
+                    print("A campanha não tem ninguém para remover.")
+                    time.sleep(1)
+                    continue
 
-    novaCampanha = Campanha()
-    novaCampanha.atribuiNome(nomeCampanha)
-    novaCampanha.atribuiHistoria(histCampanha)
-    
-    bd.obtemCampanhas().append(novaCampanha)
-    print("Campanha criada com sucesso!")
+                opcoes = [questionary.Choice(entidade.mostraNome(), entidade) for entidade in self._EntidadesCampanha]
+                opcoes.append(questionary.Choice("Voltar", None))
 
-    entraCampanha = questionary.confirm("Deseja entrar na campanha agora?").ask()
-    if entraCampanha:
-        novaCampanha.menuCampanha()
-
-    return
+                entidade_escolhida = questionary.select(
+                    "Quem você quer remover?",
+                    choices=opcoes,
+                    qmark=" ",
+                    instruction=" "
+                ).ask()
+                
+                if entidade_escolhida:
+                    self.removeEntidadeCapamanha(entidade_escolhida)
+                    input("\nPressione [Enter]")

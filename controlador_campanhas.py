@@ -1,5 +1,4 @@
 # --------------------------
-from controlaCombate import ControlaCombate
 from campanha import Campanha
 from BD import bd
 import os
@@ -9,12 +8,12 @@ import questionary
 
 class ControladorDeCampanha():
 
-    def MenuPrincipal(self, iniciativa, turno):
-        iniciativaMenu = list(iniciativa) if iniciativa else []
-        turnoMenu = turno
+    def MenuPrincipal(self, campanhaAtual):
         while True:
+            iniciativaMenu = campanhaAtual.iniciativaAtual
+            turnoMenu = campanhaAtual.turnoAtual
             os.system('cls')
-            print(f'═════════════════════════════════════════════════════════════')
+            print(f'════════════{campanhaAtual.obtemNome().upper}══════════════')
             print(f'Iniciativa: {iniciativaMenu}')
             print(f'Turno: {turnoMenu}') #acho que seria legal bota aqui tbm quem vai joga nesse turno
             print('══════════════════════════════════════════════════════════════')
@@ -22,20 +21,36 @@ class ControladorDeCampanha():
             escolha = questionary.select(
                 "Escolha uma opção",
                 choices=[
-                    questionary.Choice(title='Editar Iniciativa', value='1'), 
-                    questionary.Choice(title='Editar Quantidade de Turnos', value='2'),
-                    questionary.Choice(title='Adicionar Entidade', value='3'), 
-                    questionary.Choice(title='Remover Entidade', value='4'),
+                    questionary.Choice(title='Editar Quantidade de Turnos', value='1'), 
+                    questionary.Choice(title='Editar Iniciativa', value='2'),
+                    questionary.Choice(title='Adicionar/Remover Entidades', value='3'), 
+                    questionary.Choice(title='Listar Entidades', value='4'), 
                     questionary.Choice(title='Gerenciar combate', value='5'),
+                    questionary.Choice(title='Editar Campanha', value='6'),
                     questionary.Choice(title='Voltar', value='0')
                 ],
                 instruction=" ",
                 qmark=" "
             ).ask()
 
-            #essa parte de edita iniciativa fico ENORME e eu acho que devia te sido uma função propria
-            #soq eu nn quero terq muda isso nos diagramas :P
             if escolha == '1':
+                os.system('cls')
+                print(f'══════Editar Turno══════')
+                print(f'\nTurno atual: {turnoMenu}')
+                
+                novo_turno = questionary.text(
+                    "Novo valor:",
+                    validate=lambda text: text.isdigit() and int(text) >= 0 or "Número inválido.",
+                qmark=" ",
+                instruction=" "
+                ).ask()
+                
+                if novo_turno:
+                    campanhaAtual.turnoAtual = int(novo_turno)
+                    print("Atualizado.")
+                time.sleep(1)
+                   
+            elif escolha == '2':
                 while True:
                     os.system('cls')
                     print(f'--- Editar Iniciativa ---')
@@ -142,11 +157,8 @@ class ControladorDeCampanha():
                     
                     elif acao_init == '0':
                         break
-            elif escolha == '2':
-                os.system('cls')
-                print(f'--- Editar Turno ---')
-                print(f'Turno atual: {turnoMenu}')
-                
+                campanhaAtual.iniciativaAtual = iniciativaMenu
+
                 novo_turno = questionary.text(
                     "Digite o novo valor para o Turno:",
                     validate=lambda text: text.isdigit() and int(text) >= 0 or "Por favor, digite um número inteiro não negativo.",
@@ -159,17 +171,36 @@ class ControladorDeCampanha():
                         print(f"Turno atualizado para: {turnoMenu}")
                     except ValueError:
                         print("Erro: Valor inserido inválido.")
-                
                 time.sleep(1.5)
+            
             elif escolha == '3':
-                self.AdicionaEntidadeEmCampanha()
+                campanhaAtual.importarBanco()
             elif escolha == '4':
-                self.RemoveEntidadeEmCampanha()
+                campanhaAtual.listaEntidadeCamp()
             elif escolha == '5':
-                self.IniciaCombate()
+                from controlaCombate import ControlaCombate
+                cc = ControlaCombate()
+                cc._personagens_comb = campanhaAtual._EntidadesCampanha.copy()
+                cc.Combate()
+            elif escolha == '6':
+                while True:
+                    os.system('cls')
+                    opcoes = questionary.select(
+                        f"Editar: {campanhaAtual.obtemNome()}",
+                        choices=["Editar Nome", "Editar História", "Voltar"],
+                    qmark=" ",
+                    instruction=" "
+                    ).ask()
+                    
+                    if opcoes == "Editar Nome": campanhaAtual.editarNomeCampanha()
+                    elif opcoes == "Editar História": campanhaAtual.editarHistCampanha()
+                    elif opcoes == "Voltar": break
+
             elif escolha == '0':
                 break
-
+            elif escolha == '0':
+                break
+    
     #deixei essa função aqui por enquanto so por conveniencia 
     def criarCampanha(self):
         os.system('cls')
@@ -192,55 +223,26 @@ class ControladorDeCampanha():
         campanhas = bd.obtemCampanhas()
 
         if not campanhas:
-            print("Nenhuma campanha disponível para edição.")
+            print("Nenhuma campanha disponível.")
             time.sleep(1)
             return
 
-        opcoes = [questionary.Choice(c.obtemNome(), c) for c in campanhas]
-        opcoes.append(questionary.Choice("Voltar", None))
-
+        opcoes = [questionary.Choice(c.obtemNome(), c) for c in campanhas] 
+        opcoes.append(questionary.Choice("Voltar"))
         escolha = questionary.select(
-            "Escolha a campanha para editar:",
+            "Escolha a campanha:", 
             choices=opcoes,
             qmark=" ",
             instruction=" "
         ).ask()
 
-        if not escolha:
-            return
-
-        campanha = escolha
-
-        while True:
-            os.system('cls')
-            escolha2 = questionary.select(
-                f"Editar campanha: {campanha.obtemNome()} - escolha uma opção",
-                choices=[
-                    questionary.Choice("Editar Nome", '1'),
-                    questionary.Choice("Editar História", '2'),
-                    questionary.Choice("Listar Entidades", '3'),
-                    questionary.Choice("Adicionar Entidades na Campanha", '4'),
-                    questionary.Choice("Entrar no Menu da Campanha", '5'),
-                    questionary.Choice("Voltar", '0'),
-                ],
-                qmark=" ",
-                instruction=" "
-            ).ask()
-
-            if escolha2 == '1':
-                campanha.editarNomeCampanha()
-                time.sleep(1)
-            elif escolha2 == '2':
-                campanha.editarHistCampanha()
-                time.sleep(1)
-            elif escolha2 == '3':
-                campanha.listaEntidadeCamp()
-            elif escolha2 == '4':
-                campanha.importarBanco()
-            elif escolha2 == '5':
-                campanha.menuCampanha()
-            elif escolha2 == '0':
-                break
+        if escolha:
+            
+            self.MenuPrincipal(escolha)
+        
+        else:
+            return 
+        
 
     def DeletaCampanha(self):
         os.system('cls')
@@ -261,10 +263,10 @@ class ControladorDeCampanha():
             instruction=" "
         ).ask()
 
-        if escolha is None:
+        if escolha == "Voltar":
             return
 
-        campanha_escolhida = campanhas[escolha]
+        campanha_escolhida = escolha
 
         try:
             confirma = bd.confirmacao()
@@ -276,13 +278,13 @@ class ControladorDeCampanha():
             time.sleep(1)
             return
 
-        #limpa entidades da campanha so pra nn deixa lixa pra tras
+        # limpa entidades da campanha
         try:
             campanha_escolhida._EntidadesCampanha.clear()
         except Exception:
             pass
 
-        #remove do banco
+        # remove do banco
         try:
             campanhas.remove(campanha_escolhida)
             print("Campanha removida com sucesso.")
@@ -292,8 +294,6 @@ class ControladorDeCampanha():
         time.sleep(1)
 
     def VizualizaCampanhas(self):
-        time.sleep(1)
-        os.system('cls')
         bd.mostraColecaoCampanhas()
 
     def AdicionaEntidadeEmCampanha(self):
@@ -366,7 +366,7 @@ class ControladorDeCampanha():
             else:
                 continue
 
-    def RemoveEntidadeEmCampanha(self):
+    def RemoveEntidadeEmCampanha():
         os.system('cls')
         campanhas = bd.obtemCampanhas()
 
@@ -423,23 +423,12 @@ class ControladorDeCampanha():
         combate = ControlaCombate()
         combate.menuCombate()
 
-    #eu não acho que precisa dessas duas funções
-    #a campanha já é salva no bd quando é criada
-    def SalvaCampanha(self, campanha):
-        pass
-
-    #finaliza combate fica já em controla combate
-    def FinalizaCombate(self):
-        pass
 
 #testes
 '''def main():
-    combate = ControlaCombate()
-    combate._personagens_comb = ["Vi","Ekko","Jinx","Caitlyn"]
-    combate._iniciativa = [1,5,20,14]
     controlador = ControladorDeCampanha()
     controlador.criarCampanha()
-    controlador.MenuPrincipal(combate.OrganizaIniciativa(),combate.getTurno())
+    controlador.MenuPrincipal()
 
 
 if __name__ == "__main__":

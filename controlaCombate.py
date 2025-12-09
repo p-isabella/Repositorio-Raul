@@ -1,7 +1,7 @@
 
 from biblioteca import only_int
 from campanha import Campanha
-from BD import BancoDeDados
+from BD import bd
 import os
 
 class ControlaCombate():
@@ -43,7 +43,17 @@ class ControlaCombate():
     
 
     def fichaInesperada(self):
-        BancoDeDados.CriaEntidade(BancoDeDados)
+        novaEntidade = bd.CriaEntidade()
+        if novaEntidade:
+            print("Adicionando ao combate")
+            try:
+                iniciativa = int(input(f'Iniciativa de {novaEntidade.mostraNome()}: '))
+                self._personagens_comb.append(novaEntidade)
+                self._iniciativa.append(iniciativa)
+            except:
+                print("Iniciativa inválida")
+                self._personagens_comb.append(novaEntidade)
+                self._iniciativa.append(0)
 
     def menuCombate(self):
 
@@ -70,6 +80,7 @@ class ControlaCombate():
             elif resposta == 2:
                 self.fichaInesperada()
                 os.system('cls')
+                return 2
             elif resposta == 3:
                 os.system('cls')
                 return 3
@@ -102,12 +113,6 @@ class ControlaCombate():
             else:
                 print("Fim de combate!")
                 break
-
-
-
-
-
-        
 
 #TESTE ORGANIZA INICIATIVA            
 '''combate = ControlaCombate()
