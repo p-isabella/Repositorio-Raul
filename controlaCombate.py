@@ -86,8 +86,8 @@ class ControlaCombate():
                 return 3
     
 
-    #def addAoCombate(self,)
-
+    def addAoCombate(self,entidade):
+        self._personagens_comb.append(entidade)
 
     def Combate(self):
 
