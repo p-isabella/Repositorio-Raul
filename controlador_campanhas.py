@@ -80,13 +80,14 @@ class ControladorDeCampanha():
                 campanhaAtual.listaEntidadeCamp()
 
             elif escolha == '4':
-                controladorCombate = ControlaCombate()
 
                 resposta = questionary.select(
-                    "Você quer adicionar ou remover uma Entidade?",
+                    "O que você quer fazer?",
                     choices=[
                         questionary.Choice(title="Adicionar Entidade", value='1'),
                         questionary.Choice(title="Remover Entidade", value='2'),
+                        questionary.Choice(title="Iniciar Combate", value='3'),
+
                         questionary.Choice(title="Cancelar", value='0')
                     ],
                     instruction=" ",
@@ -105,11 +106,17 @@ class ControladorDeCampanha():
                     ).ask()
 
                     if entidadesCombate:
-                        controladorCombate.addPersonagemComb.append(entidadesCombate)
+                        controladorCombate.addAoCombate(entidadesCombate)
+                        iniciativa = questionary.text(
+                            f"Digite a iniciativa de {entidadesCombate.mostraNome()}:",
+                            validate=lambda text: text.isdigit() or "Por favor, digite um número inteiro.",
+                            qmark=" "
+                        ).ask()
                         input("\nPressione [Enter]")
+                    controladorCombate.addIniciativa(iniciativa)
                 
                 if resposta == '2':
-                    entidadesCombate = [questionary.Choice(entidade.mostraNome(), entidade) for entidade in campanhaAtual._EntidadesCampanha]
+                    entidadesCombate = [questionary.Choice(entidade.mostraNome(), entidade) for entidade in controladorCombate._personagens_comb]
                     entidadesCombate.append(questionary.Choice("Voltar", None))
                     
                     entidadesCombate = questionary.select(
@@ -120,9 +127,17 @@ class ControladorDeCampanha():
                     ).ask()
 
                     if entidadesCombate:
-                        controladorCombate.removerPersonagemComb.append(entidadesCombate)
+                        controladorCombate.removeDoCombate(entidadesCombate)
                         input("\nPressione [Enter]")                   
                 
+                if resposta == '3':
+                    if not controladorCombate._personagens_comb:
+                        print('Você não pode iniciar o combate sem personagens!')
+                        time.sleep(1)
+                        return
+                    else:
+                        controladorCombate.Combate()
+
                 if resposta == '0':
                     break
                 
