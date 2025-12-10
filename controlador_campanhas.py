@@ -13,7 +13,7 @@ class ControladorDeCampanha():
         while True:
             iniciativaMenu = controladorCombate._ordemJogadores
             os.system('cls')
-            print(f'════════════{campanhaAtual.obtemNome().upper}══════════════')
+            print(f'════════════{campanhaAtual.obtemNome().upper()}══════════════')
             print(f'ID Campanha: {campanhaAtual.obtemID()}')
             print(f'Iniciativa: {iniciativaMenu}')
             print('══════════════════════════════════════════════════════════════')
@@ -329,3 +329,4 @@ class ControladorDeCampanha():
 
 if __name__ == "__main__":
     main()'''
+
