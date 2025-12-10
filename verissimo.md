@@ -85,4 +85,55 @@ Agora toda vez que você for executar esse programa em qualquer lugar, cria um a
 ---
 
 
-## Arquivo de testes
+## O que é o `.gitignore`?
+
+Já repararam que o Python fica gerando um monte de `__pycache__` no seu computador quando ele começa a executar as coisas?
+
+Isso pro git é lixo, você não quer ficar enviando isso para o GitHub pra quando suas colegas forem baixar o repositório no pc delas.
+
+O `.gitignore` serve exatamente pra isso! Ele diz pro git o seguinte:
+
+> "Coloca as alterações que eu fiz lá no GitHub, mas ignora os arquivos que estão nessa lista aqui ó 👉 `.gitignore`"
+
+Agora é só uma pequena pasta de `__pycache__`, mas acredita em mim, em alguns casos isso pode pesar GIGABYTES. Essa é uma boa prática pra levar pro resto da vida.
+
+Se vocês forem trabalhar com JavaScript por exemplo (Usando Node.js) vão encontrar um tal de `node_modules/` na pasta de vocês... Esse carinha ai pode ficar bem pesado dependendo do projeto, você não vai querer ficar baixando e fazendo upload dessa pasta inteira gigantesca toda vez que baixa o repositório né?
+
+Eis a solução: `.gitignore`
+
+---
+
+## Relatório de testes
+
+✅ - Tudo certo
+
+❌ - Falhou
+
+```
+Gerenciar Entidades (Banco de Dados)✅
+    Criar✅
+        Criatura✅
+        Jogador✅
+        NPC❌ (preso em loop infinito de inventário)
+        Voltar✅
+    Ver/Editar
+        Criatura✅
+        Jogador✅
+        NPC✅
+        Voltar✅
+    Excluir
+        Criatura❌(não atualiza a exibição e depois de apagar todos, quebra)
+        Jogador❌(não atualiza a exibição e depois de apagar todos, quebra)
+        NPC❌(não atualiza a exibição e depois de apagar todos, quebra)
+        Voltar❌(quebra)
+    Voltar✅
+Campanhas
+    Criar Nova❌(AttributeError: 'Campanha' object has no attribute 'menuCampanha')
+    Visualizar Existente❌(RECURSIVO)
+    Deletar Campanha❌(Campanha não encontrada)
+    Voltar✅
+Combate
+    Escolher campanha❌ ('NoneType' object has no attribute 'iniciativaAtual')
+    Voltar❌ (quebra)
+Sair✅ (sim eu testei)
+```
