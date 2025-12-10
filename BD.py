@@ -276,6 +276,8 @@ class BancoDeDados():
             except TypeError:
                 entidadeEscolhida.excluiEntidade()
 
+            break
+
     def confirmacao(self):
         while True:
             os.system('cls')
@@ -295,5 +297,6 @@ class BancoDeDados():
                 return True
             elif confirma == 2:
                 return False
+
 
 bd = BancoDeDados()
