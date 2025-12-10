@@ -15,7 +15,7 @@ class Campanha():
         self._Nome = "Campanha sem nome"
         self._Historia = "Campanha sem história"
         self._EntidadesCampanha = []
-        self.iniciativaAtual = []
+        self.iniciativaAtual = [] #apagar
 
     #construtores classe campanha
     def obtemID(self):
@@ -72,6 +72,13 @@ class Campanha():
                 print(f"- {ent.mostraNome()}")
             input("[Enter] para continuar...")
         return self._EntidadesCampanha
+    
+    def buscaEntidade(self, nome):
+        for i in self._EntidadesCampanha:
+            if i == nome:
+                return i
+        
+
     
     def importarBanco(self):
         while True:
