@@ -31,7 +31,11 @@ class ControlaCombate():
             iniciativa_ordenada = sorted(pers_iniciativa,key=lambda x: x[1],reverse=True)
             personagens_ordem, iniciativas_ordem = zip(*iniciativa_ordenada)
             return personagens_ordem
-        
+
+    def mostraIniciativa(self):
+        iniciativa = self.OrganizaIniciativa(self)
+        print(iniciativa)
+
     def contadorRodada(self):
         self._rodada += 1
 
@@ -39,8 +43,7 @@ class ControlaCombate():
         self._turno = 0
 
     def proxTurno(self): 
-        self._turno += 1
-    
+        self._turno += 1 
 
     def fichaInesperada(self):
         novaEntidade = bd.CriaEntidade()
@@ -83,8 +86,7 @@ class ControlaCombate():
                 return 2
             elif resposta == 3:
                 os.system('cls')
-                return 3
-    
+                return 3 
 
     def addAoCombate(self,entidade):
         self._personagens_comb.append(entidade)
