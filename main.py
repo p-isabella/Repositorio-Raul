@@ -21,6 +21,7 @@ def main():
             ], qmark=" ", instruction=" "
         ).ask()
 
+
         if escolha == "Gerenciar Entidades (Banco de Dados)":
             while True:
                 opcaoCampanha = questionary.select("O que você quer fazer?", choices=["Criar", "Ver/Editar","Excluir", "Voltar"],qmark=" ", instruction=" ").ask() #FALTA COLOCAR EXCLUIR ENTIDADES
@@ -43,6 +44,7 @@ def main():
                 if opcaoCampanha == "Criar Nova":
                     controlador.criarCampanha()
                 elif opcaoCampanha == "Carregar Existente":
+
                     controlador.EditaCampanha()
                 elif opcaoCampanha == "Deletar Campanha":
                     controlador.DeletaCampanha()

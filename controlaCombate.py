@@ -59,14 +59,13 @@ class ControlaCombate():
         novaEntidade = bd.CriaEntidade()
         if not novaEntidade:
             return
-        entidade = novaEntidade.mostraNome()
 
         if novaEntidade:
             print("Adicionado ao combate")
             time.sleep(2)
             try:
-                iniciativa = int(input(f'Iniciativa de {entidade}: '))
-                self._personagens_comb.append(entidade)
+                iniciativa = int(input(f'Iniciativa de {novaEntidade.mostraIniciativa()}: '))
+                self._personagens_comb.append(novaEntidade)
                 self._iniciativa.append(iniciativa)
                 self.OrganizaIniciativa()
 
@@ -119,12 +118,8 @@ class ControlaCombate():
         print(f"Ordem de iniciativa: {ordem}")
         while True:
 
-
-            if self._turno == 0:
-                print("Rodada: ", self._rodada)
-            elif self._turno == (len(self._ordemJogadores) - 1):
+            if self._turno == (len(self._ordemJogadores)):
                 self._turno = 0
-
 
             personagem = self._ordemJogadores[self._turno]
             print(f"Vez de {personagem.mostraNome()} jogar!")
@@ -133,7 +128,7 @@ class ControlaCombate():
 
             resposta = self.menuCombate()
             if resposta == 0:
-                self.editaFicha(personagem)
+                self.editaFicha(personagem.mostraNome())
                 time.sleep(2)
 
             elif resposta == 1:
