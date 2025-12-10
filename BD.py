@@ -249,8 +249,9 @@ class BancoDeDados():
 
     def EscolheEntidadeRemocao(self):
         colecao = self.EscolheEntidadeColecao()
-        if len(colecao) == 0:
+        if not colecao or len(colecao) == 0:
             print("A biblioteca em questão está vazia para alguma edição.")
+            return
         else:
             opcoes = []
             contador = 1
