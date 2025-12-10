@@ -163,8 +163,9 @@ class ControladorDeCampanha():
             time.sleep(1)
             return
 
-        opcoes = [questionary.Choice(c.obtemNome(), c) for c in campanhas] 
+        opcoes = [questionary.Choice(c.obtemNome(), c) for c in (campanhas)] 
         opcoes.append(questionary.Choice("Voltar"))
+
         escolha = questionary.select(
             "Escolha a campanha:", 
             choices=opcoes,
@@ -173,10 +174,9 @@ class ControladorDeCampanha():
         ).ask()
 
         if escolha:
-          
             self.MenuPrincipal(escolha)
         
-        else:
+        elif escolha == 'Voltar':
             return 
         
     def DeletaCampanha(self):
@@ -189,7 +189,7 @@ class ControladorDeCampanha():
             return
 
         opcoes = [questionary.Choice(c.obtemNome(), idx) for idx, c in enumerate(campanhas)]
-        opcoes.append(questionary.Choice("Voltar", None))
+        opcoes.append(questionary.Choice("Voltar"))
 
         escolha = questionary.select(
             "Escolha a campanha para deletar:",

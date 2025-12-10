@@ -32,14 +32,14 @@ def main():
                 elif opcaoCampanha == "Excluir":
                     bd.EscolheEntidadeRemocao()
                 elif opcaoCampanha == "Voltar":
-                    break
+                    return
 
         elif escolha == "Campanhas":
             campanhas = bd.obtemCampanhas()
             if not campanhas:
                 controlador.criarCampanha()
             else: 
-                opcaoCampanha = questionary.select("Campanhas", choices=["Criar Nova", "Visualizar Existente", "Deletar Campanha", "Voltar"], qmark=" ", instruction=" ").ask()
+                opcaoCampanha = questionary.select("Campanhas", choices=["Criar Nova", "Carregar Existente", "Deletar Campanha", "Voltar"], qmark=" ", instruction=" ").ask()
                 if opcaoCampanha == "Criar Nova":
                     controlador.criarCampanha()
                 elif opcaoCampanha == "Carregar Existente":
