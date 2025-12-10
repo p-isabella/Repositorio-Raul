@@ -66,7 +66,7 @@ def dadostestesBD(bd):
     camp1.addEntidadeCampanha(npc2)
     camp1.addEntidadeCampanha(c2)
 
-    combate = ControlaCombate()
+    '''combate = ControlaCombate()
 
     combate.addAoCombate(j1)
     combate.addAoCombate(npc2)
@@ -76,7 +76,7 @@ def dadostestesBD(bd):
     combate.addIniciativa(20)
     combate.addIniciativa(8)
 
-    bd._BancoCombate.append(combate)
+    bd._BancoCombate.append(combate)'''
 
 
 
