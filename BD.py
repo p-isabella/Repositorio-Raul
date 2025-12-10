@@ -17,7 +17,6 @@ class BancoDeDados():
     __BancodeNPCS = []
     __BancodeCriaturas = []
     __BancodeJogadores = []
-    _BancoCombate = []
 
     def obtemNPCs(self):
         return self.__BancodeNPCS
