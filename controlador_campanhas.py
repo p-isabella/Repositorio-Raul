@@ -1,4 +1,5 @@
 # --------------------------
+from controlaCombate import ControlaCombate
 from campanha import Campanha
 from BD import bd
 import os
@@ -8,161 +9,76 @@ import questionary
 
 class ControladorDeCampanha():
 
-    def MenuPrincipal(self, campanhaAtual):
+    def MenuPrincipal(self, campanhaAtual, controladorCombate):
         while True:
-            iniciativaMenu = campanhaAtual.iniciativaAtual
-            turnoMenu = 1
+            iniciativaMenu = controladorCombate._ordemJogadores
             os.system('cls')
             print(f'════════════{campanhaAtual.obtemNome().upper}══════════════')
             print(f'ID Campanha: {campanhaAtual.obtemID()}')
             print(f'Iniciativa: {iniciativaMenu}')
-            print(f'Turno: {turnoMenu}')
             print('══════════════════════════════════════════════════════════════')
 
             escolha = questionary.select(
                 "Escolha uma opção",
                 choices=[
-                    questionary.Choice(title='Editar Iniciativa', value='2'),
-                    questionary.Choice(title='Adicionar/Remover Entidades', value='3'), 
-                    questionary.Choice(title='Listar Entidades', value='4'), 
-                    questionary.Choice(title='Gerenciar combate', value='5'),
-                    questionary.Choice(title='Editar Campanha', value='6'),
+                    questionary.Choice(title='Editar Iniciativa', value='1'),
+                    questionary.Choice(title='Remover Entidades', value='2'), 
+                    questionary.Choice(title='Listar Entidades', value='3'), 
+                    questionary.Choice(title='Gerenciar combate', value='4'),
+                    questionary.Choice(title='Editar Campanha', value='5'),
                     questionary.Choice(title='Voltar', value='0')
                 ],
                 instruction=" ",
                 qmark=" "
             ).ask()
  
-            if escolha == '2':
-                while True:
-                    os.system('cls')
-                    print(f'--- Editar Iniciativa ---')
-                    print(f'Lista Atual: {iniciativaMenu}\n')
-
-                    acao_init = questionary.select(
-                        "O que deseja fazer na iniciativa?",
-                        choices=[
-                            questionary.Choice('Remover Entidade da lista', '1'),
-                            questionary.Choice('Adicionar Entidade na lista', '2'),
-                            questionary.Choice('Limpar lista de Iniciativa', '3'),
-                            questionary.Choice('Voltar', '0')
-                        ],
+            if escolha == '1':
+                if not controladorCombate._personagens_comb:
+                    print("A lista de personagens no combate está vazia.")
+                    time.sleep(1)
+                else:
+                    entidade_para_editar = questionary.select(
+                        "Qual entidade deseja alterar a iniciativa?",
+                        choices=controladorCombate._personagens_comb,
                         qmark=" ",
                         instruction=" "
                     ).ask()
 
-                    if acao_init == '1':
-                        if not iniciativaMenu:
-                            print("A lista de iniciativa está vazia.")
-                            time.sleep(1)
-                        else:
-                            opcoes_remocao = iniciativaMenu + ["Cancelar"]
-                            removido = questionary.select(
-                                "Quem você deseja remover da iniciativa?",
-                                choices=opcoes_remocao,
-                                qmark=" "
-                            ).ask()
-
-                            if removido != "Cancelar":
-                                iniciativaMenu.remove(removido)
-                                print(f"{removido} removido da iniciativa.")
-                                time.sleep(1)
-
-                    elif acao_init == '2':
-                        tipo_banco = questionary.select(
-                            "Escolha de onde importar a entidade:",
-                            choices=[
-                                questionary.Choice('NPCs', '1'),
-                                questionary.Choice('Criaturas', '2'),
-                                questionary.Choice('Jogadores', '3'),
-                                questionary.Choice('Voltar', '0')
-                            ],
-                            qmark=" ",
-                            instruction=" "
+                    if entidade_para_editar:
+                        novo_valor_inic = questionary.text(
+                            f"Digite o novo valor de iniciativa para {entidade_para_editar}:",
+                            validate=lambda text: text.isdigit() or "Por favor, digite um número inteiro.",
+                            qmark=" "
                         ).ask()
 
-                        if tipo_banco != '0' and tipo_banco is not None:
-                            lista_banco = []
-                            if tipo_banco == '1':
-                                lista_banco = bd.obtemNPCs()
-                            elif tipo_banco == '2':
-                                lista_banco = bd.obtemCriaturas()
-                            elif tipo_banco == '3':
-                                lista_banco = bd.obtemJogadores()
-
-                            if not lista_banco:
-                                print("A coleção selecionada está vazia.")
-                                time.sleep(1)
-                            else:
-                                opcoes_entidades = [
-                                    questionary.Choice(ent.mostraNome(), ent.mostraNome()) 
-                                    for ent in lista_banco
-                                ]
-                                opcoes_entidades.append(questionary.Choice("Voltar", "0"))
-
-                                entidade_nome_escolhida = questionary.select(
-                                    "Selecione a entidade para adicionar à iniciativa:",
-                                    choices=opcoes_entidades,
-                                    qmark=" ",
-                                    instruction=" "
-                                ).ask()
-
-                                if entidade_nome_escolhida and entidade_nome_escolhida != "0":
-                                    if not iniciativaMenu:
-                                        iniciativaMenu.append(entidade_nome_escolhida)
-                                        print(f"{entidade_nome_escolhida} adicionado à iniciativa.")
-                                    else:
-                                        opcoes_posicao = [questionary.Choice("1 - Início", 0)]
-                                        
-                                        for index, nome_atual in enumerate(iniciativaMenu):
-                                            pos_visual = index + 2
-                                            opcoes_posicao.append(questionary.Choice(f"{pos_visual} - Após {nome_atual}", index + 1))
-
-                                        posicao_escolhida = questionary.select(
-                                            f"Em qual posição deseja inserir {entidade_nome_escolhida}?",
-                                            choices=opcoes_posicao,
-                                            qmark=" ",
-                                            instruction=" "
-                                        ).ask()
-
-                                        if posicao_escolhida is not None:
-                                            iniciativaMenu.insert(posicao_escolhida, entidade_nome_escolhida)
-                                            print(f"{entidade_nome_escolhida} inserido na posição {posicao_escolhida + 1}.")
+                        if novo_valor_inic is not None:
+                            try:
+                                novo_valor_int = int(novo_valor_inic)
+                                
+                                try:
+                                    index = controladorCombate._personagens_comb.index(entidade_para_editar)
+                                    valor_antigo = controladorCombate._iniciativa[index]
+                                    controladorCombate._iniciativa[index] = novo_valor_int
                                     
-                                    time.sleep(1)
-
-                    elif acao_init == '3':
-                        confirmar = questionary.confirm("Tem certeza que deseja limpar toda a iniciativa?").ask()
-                        if confirmar:
-                            iniciativaMenu.clear()
-                            print("Lista de iniciativa limpa.")
-                            time.sleep(1)
-                    
-                    elif acao_init == '0':
-                        break
-                campanhaAtual.iniciativaAtual = iniciativaMenu
-
-                novo_turno = questionary.text(
-                    "Digite o novo valor para o Turno:",
-                    validate=lambda text: text.isdigit() and int(text) >= 0 or "Por favor, digite um número inteiro não negativo.",
-                    qmark=" "
-                ).ask()
+                                    print(f"Iniciativa de {entidade_para_editar} alterada de {valor_antigo} para {novo_valor_int}.")
+                                    
+                                    controladorCombate.OrganizaIniciativa() 
+                                except ValueError:
+                                    print("Erro: Entidade não encontrada na lista de combate.")
+                                    
+                            except ValueError:
+                                print("Valor inválido.")
+                            
+                            time.sleep(1.5)
                 
-                if novo_turno is not None:
-                    try:
-                        turnoMenu = int(novo_turno)
-                        print(f"Turno atualizado para: {turnoMenu}")
-                    except ValueError:
-                        print("Erro: Valor inserido inválido.")
-                time.sleep(1.5)
-            
-            elif escolha == '3':
+            elif escolha == '2':
                 campanhaAtual.importarBanco()
-            elif escolha == '4':
+
+            elif escolha == '3':
                 campanhaAtual.listaEntidadeCamp()
-            elif escolha == '5':
-                from controlaCombate import ControlaCombate
-                cc = ControlaCombate()
+
+            elif escolha == '4':
+                controladorCombate = ControlaCombate()
 
                 resposta = questionary.select(
                     "Você quer adicionar ou remover uma Entidade?",
@@ -187,7 +103,7 @@ class ControladorDeCampanha():
                     ).ask()
 
                     if entidadesCombate:
-                        cc.addPersonagemComb.append(entidadesCombate)
+                        controladorCombate.addPersonagemComb.append(entidadesCombate)
                         input("\nPressione [Enter]")
                 
                 if resposta == '2':
@@ -202,13 +118,13 @@ class ControladorDeCampanha():
                     ).ask()
 
                     if entidadesCombate:
-                        cc.removerPersonagemComb.append(entidadesCombate)
+                        controladorCombate.removerPersonagemComb.append(entidadesCombate)
                         input("\nPressione [Enter]")                   
                 
                 if resposta == '0':
                     break
                 
-            elif escolha == '6':
+            elif escolha == '5':
                 while True:
                     os.system('cls')
                     opcoes = questionary.select(
@@ -224,10 +140,7 @@ class ControladorDeCampanha():
 
             elif escolha == '0':
                 break
-            elif escolha == '0':
-                break
     
-    #deixei essa função aqui por enquanto so por conveniencia 
     def criarCampanha(self):
         os.system('cls')
         nomeCampanha = questionary.text("Qual o nome da campanha?").ask()
@@ -243,6 +156,7 @@ class ControladorDeCampanha():
         entraCampanha = questionary.confirm("Deseja entrar na campanha agora?").ask()
         if entraCampanha:
             novaCampanha.menuCampanha()
+        return novaCampanha
 
     def EditaCampanha(self):
         os.system('cls')
@@ -269,7 +183,6 @@ class ControladorDeCampanha():
         else:
             return 
         
-
     def DeletaCampanha(self):
         os.system('cls')
         campanhas = bd.obtemCampanhas()
@@ -321,76 +234,6 @@ class ControladorDeCampanha():
 
     def VizualizaCampanhas(self):
         bd.mostraColecaoCampanhas()
-
-    def AdicionaEntidadeEmCampanha(self):
-        os.system('cls')
-        campanhas = bd.obtemCampanhas()
-
-        if not campanhas:
-            print("Nenhuma campanha disponível.")
-            time.sleep(1)
-            return
-
-        # Seleciona a campanha
-        opcoes_campanhas = [questionary.Choice(c.obtemNome(), c) for c in campanhas]
-        opcoes_campanhas.append(questionary.Choice("Voltar", None))
-
-        campanha_escolhida = questionary.select(
-            "Escolha a campanha para adicionar entidade:",
-            choices=opcoes_campanhas,
-            qmark=" ",
-            instruction=" "
-        ).ask()
-
-        if not campanha_escolhida:
-            return
-
-        while True:
-            os.system('cls')
-            tipo_banco = questionary.select(
-                "Escolha qual banco de dados quer acessar:",
-                choices=[
-                    questionary.Choice(title='NPCs', value='1'),
-                    questionary.Choice(title='Criaturas', value='2'),
-                    questionary.Choice(title='Jogadores', value='3'),
-                    questionary.Choice(title='Voltar', value='0')
-                ],
-                instruction=" ",
-                qmark=" "
-            ).ask()
-
-            lista_banco = []
-            if tipo_banco == '1':
-                lista_banco = bd.obtemNPCs()
-            elif tipo_banco == '2':
-                lista_banco = bd.obtemCriaturas()
-            elif tipo_banco == '3':
-                lista_banco = bd.obtemJogadores()
-            elif tipo_banco == '0':
-                return
-
-            if not lista_banco:
-                print("Banco vazio.")
-                time.sleep(1)
-                continue
-
-            #seleciona a entidade
-            opcoes_entidades = [questionary.Choice(ent.mostraNome(), ent) for ent in lista_banco]
-            opcoes_entidades.append(questionary.Choice("Voltar", None))
-
-            entidade_escolhida = questionary.select(
-                "Quem adicionar à campanha?",
-                choices=opcoes_entidades,
-                qmark=" ",
-                instruction=" "
-            ).ask()
-
-            if entidade_escolhida:
-                campanha_escolhida.addEntidadeCampanha(entidade_escolhida)
-                input("Pressione Enter para continuar...")
-                break
-            else:
-                continue
 
     def RemoveEntidadeEmCampanha():
         os.system('cls')
@@ -470,9 +313,19 @@ class ControladorDeCampanha():
 #testes
 '''def main():
     controlador = ControladorDeCampanha()
-    controlador.criarCampanha()
-    controlador.MenuPrincipal()
+    
+    campanha_teste = Campanha()
+    campanha_teste.atribuiNome('teste')
 
+    cc = ControlaCombate()
+    
+    cc._personagens_comb = ['jogador', 'monstro']
+
+    cc._iniciativa = [15, 8] 
+    
+    cc.OrganizaIniciativa()
+
+    controlador.MenuPrincipal(campanha_teste, cc)
 
 if __name__ == "__main__":
     main()'''
