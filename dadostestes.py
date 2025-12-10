@@ -76,7 +76,7 @@ def dadostestesBD(bd):
     combate.addIniciativa(20)
     combate.addIniciativa(8)
 
-
+    bd._BancoCombate.append(combate)
 
 
 

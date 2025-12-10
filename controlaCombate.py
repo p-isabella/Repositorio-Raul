@@ -14,7 +14,7 @@ class ControlaCombate():
         self._personagens_comb = []
         self._iniciativa = []
         self._ordemJogadores = []
-        self._qtd_jogadores = len(self._personagens_comb)
+        self._qtd_jogadores = len(self._ordemJogadores)
 
     def OrganizaIniciativa(self):
 
@@ -33,6 +33,13 @@ class ControlaCombate():
             pers_iniciativa = list(zip(self._personagens_comb, self._iniciativa))
             iniciativa_ordenada = sorted(pers_iniciativa,key=lambda x: x[1],reverse=True)
             self._ordemJogadores, iniciativas_ordem = zip(*iniciativa_ordenada)
+
+            ordem = []
+            for i in self._ordemJogadores:
+                nome = i.mostraNome()
+                ordem.append(nome)
+            return ordem
+
 
     def mostraIniciativa(self):
         iniciativa = self.OrganizaIniciativa(self)
@@ -100,12 +107,16 @@ class ControlaCombate():
     def removeDoCombate(self, entidade):
         self._personagens_comb.remove(entidade)
 
+
     def Combate(self):
 
-        print(f"Ordem de iniciativa: {self._ordemJogadores}")
+        
+
+        ordem = self.OrganizaIniciativa()
+
+        print(f"Ordem de iniciativa: {ordem}")
         while True:
 
-            self.OrganizaIniciativa()
 
             if self._turno == 0:
                 print("Rodada: ", self._rodada)
@@ -114,9 +125,9 @@ class ControlaCombate():
 
 
             personagem = self._ordemJogadores[self._turno]
-            print(f"Vez de {personagem} jogar!")
+            print(f"Vez de {personagem.mostraNome()} jogar!")
             
-            print(f"Ficha da {personagem}... ")
+            print(f"Ficha da {personagem.mostraNome()}... ")
 
             resposta = self.menuCombate()
             if resposta == 0:
