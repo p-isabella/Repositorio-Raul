@@ -149,14 +149,10 @@ class ControladorDeCampanha():
         novaCampanha = Campanha()
         novaCampanha.atribuiNome(nomeCampanha)
         novaCampanha.atribuiHistoria(histCampanha)
-        
+    
         bd.obtemCampanhas().append(novaCampanha)
         print("Campanha criada com sucesso!")
-
-        entraCampanha = questionary.confirm("Deseja entrar na campanha agora?").ask()
-        if entraCampanha:
-            novaCampanha.menuCampanha()
-        return novaCampanha
+        time.sleep(2)
 
     def EditaCampanha(self):
         os.system('cls')
@@ -329,4 +325,5 @@ class ControladorDeCampanha():
 
 if __name__ == "__main__":
     main()'''
+
 
