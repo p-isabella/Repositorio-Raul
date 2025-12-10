@@ -109,12 +109,14 @@ Eis a solução: `.gitignore`
 
 ❌ - Falhou
 
+❓ - Não testado (último teste não estava funcionando)
+
 ```
 Gerenciar Entidades (Banco de Dados)✅
     Criar✅
         Criatura✅
         Jogador✅
-        NPC❌ (preso em loop infinito de inventário)
+        NPC❓ (preso em loop infinito de inventário)
         Voltar✅
     Ver/Editar
         Criatura✅
@@ -122,18 +124,18 @@ Gerenciar Entidades (Banco de Dados)✅
         NPC✅
         Voltar✅
     Excluir
-        Criatura❌(não atualiza a exibição e depois de apagar todos, quebra)
-        Jogador❌(não atualiza a exibição e depois de apagar todos, quebra)
-        NPC❌(não atualiza a exibição e depois de apagar todos, quebra)
-        Voltar❌(quebra)
+        Criatura✅(não atualiza a exibição e depois de apagar todos, quebra)
+        Jogador✅(não atualiza a exibição e depois de apagar todos, quebra)
+        NPC✅(não atualiza a exibição e depois de apagar todos, quebra)
+        Voltar✅(quebra)
     Voltar✅
 Campanhas
-    Criar Nova❌(AttributeError: 'Campanha' object has no attribute 'menuCampanha')
-    Visualizar Existente❌(RECURSIVO)
-    Deletar Campanha❌(Campanha não encontrada)
+    Criar Nova❓(AttributeError: 'Campanha' object has no attribute 'menuCampanha')
+    Visualizar Existente❓(RECURSIVO)
+    Deletar Campanha❓(Campanha não encontrada)
     Voltar✅
 Combate
-    Escolher campanha❌ ('NoneType' object has no attribute 'iniciativaAtual')
-    Voltar❌ (quebra)
+    Escolher campanha❓ ('NoneType' object has no attribute 'iniciativaAtual')
+    Voltar❓ (quebra)
 Sair✅ (sim eu testei)
 ```

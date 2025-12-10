@@ -249,8 +249,9 @@ class BancoDeDados():
 
     def EscolheEntidadeRemocao(self):
         colecao = self.EscolheEntidadeColecao()
-        if len(colecao) == 0:
+        if not colecao or len(colecao) == 0:
             print("A biblioteca em questão está vazia para alguma edição.")
+            return
         else:
             opcoes = []
             contador = 1
@@ -276,6 +277,8 @@ class BancoDeDados():
             except TypeError:
                 entidadeEscolhida.excluiEntidade()
 
+            break
+
     def confirmacao(self):
         while True:
             os.system('cls')
@@ -295,5 +298,6 @@ class BancoDeDados():
                 return True
             elif confirma == 2:
                 return False
+
 
 bd = BancoDeDados()
