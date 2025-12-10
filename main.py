@@ -17,7 +17,6 @@ def main():
             choices=[
                 "Gerenciar Entidades (Banco de Dados)",
                 "Campanhas",
-                "Combate",
                 "Sair"
             ], qmark=" ", instruction=" "
         ).ask()
@@ -25,14 +24,15 @@ def main():
         if escolha == "Gerenciar Entidades (Banco de Dados)":
             while True:
                 opcaoCampanha = questionary.select("O que você quer fazer?", choices=["Criar", "Ver/Editar","Excluir", "Voltar"],qmark=" ", instruction=" ").ask() #FALTA COLOCAR EXCLUIR ENTIDADES
-                if opcaoCampanha == "Criar":
+                if opcaoCampanha == "Voltar":
+                    break
+                elif opcaoCampanha == "Criar":
                     bd.CriaEntidade()
                 elif opcaoCampanha == "Ver/Editar":
                     bd.escolheColecaoEntidade()
                 elif opcaoCampanha == "Excluir":
                     bd.EscolheEntidadeRemocao()
-                elif opcaoCampanha == "Voltar":
-                    return
+
 
         elif escolha == "Campanhas":
             campanhas = bd.obtemCampanhas()
@@ -47,13 +47,6 @@ def main():
                 elif opcaoCampanha == "Deletar Campanha":
                     controlador.DeletaCampanha()
                 
-        elif escolha == "Combate":
-            #Combate = ControlaCombate()
-            Combate = bd._BancoCombate[0]
-            Combate.Combate()
-            #campanha = controlador.buscaCampanha()
-            #controlador.MenuPrincipal(campanha)
-
             
         elif escolha == "Sair":
             break

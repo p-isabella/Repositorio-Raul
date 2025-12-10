@@ -9,7 +9,9 @@ import questionary
 
 class ControladorDeCampanha():
 
-    def MenuPrincipal(self, campanhaAtual, controladorCombate):
+
+    def MenuPrincipal(self, campanhaAtual):
+        controladorCombate = ControlaCombate()
         while True:
             iniciativaMenu = controladorCombate._ordemJogadores
             os.system('cls')
@@ -173,12 +175,13 @@ class ControladorDeCampanha():
             instruction=" "
         ).ask()
 
-        if escolha:
-            self.MenuPrincipal(escolha)
-        
-        elif escolha == 'Voltar':
+        if escolha == 'Voltar':
             return 
         
+        elif escolha:
+            self.MenuPrincipal(escolha)
+        
+
     def DeletaCampanha(self):
         os.system('cls')
         campanhas = bd.obtemCampanhas()
