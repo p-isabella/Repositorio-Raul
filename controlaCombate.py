@@ -42,7 +42,7 @@ class ControlaCombate():
 
 
     def mostraIniciativa(self):
-        iniciativa = self.OrganizaIniciativa(self)
+        iniciativa = self.OrganizaIniciativa()
         print(iniciativa)
 
     def contadorRodada(self):
@@ -57,6 +57,8 @@ class ControlaCombate():
     def fichaInesperada(self):
 
         novaEntidade = bd.CriaEntidade()
+        if not novaEntidade:
+            return
         entidade = novaEntidade.mostraNome()
 
         if novaEntidade:
@@ -120,7 +122,7 @@ class ControlaCombate():
 
             if self._turno == 0:
                 print("Rodada: ", self._rodada)
-            elif self._turno == (self._qtd_jogadores - 1):
+            elif self._turno == (len(self._ordemJogadores) - 1):
                 self._turno = 0
 
 
