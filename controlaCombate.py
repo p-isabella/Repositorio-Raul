@@ -1,8 +1,10 @@
 
 from biblioteca import only_int
 from campanha import Campanha
+from entidades import Entidade
 from BD import bd
 import os
+import time
 
 class ControlaCombate():
 
@@ -10,8 +12,9 @@ class ControlaCombate():
         self._rodada = 1
         self._turno = 0
         self._personagens_comb = []
-        self._qtd_jogadores = len(self._personagens_comb)
         self._iniciativa = []
+        self._ordemJogadores = []
+        self._qtd_jogadores = len(self._ordemJogadores)
 
     def OrganizaIniciativa(self):
 
@@ -29,11 +32,17 @@ class ControlaCombate():
         else:
             pers_iniciativa = list(zip(self._personagens_comb, self._iniciativa))
             iniciativa_ordenada = sorted(pers_iniciativa,key=lambda x: x[1],reverse=True)
-            personagens_ordem, iniciativas_ordem = zip(*iniciativa_ordenada)
-            return personagens_ordem
+            self._ordemJogadores, iniciativas_ordem = zip(*iniciativa_ordenada)
+
+            ordem = []
+            for i in self._ordemJogadores:
+                nome = i.mostraNome()
+                ordem.append(nome)
+            return ordem
+
 
     def mostraIniciativa(self):
-        iniciativa = self.OrganizaIniciativa(self)
+        iniciativa = self.OrganizaIniciativa()
         print(iniciativa)
 
     def contadorRodada(self):
@@ -46,17 +55,35 @@ class ControlaCombate():
         self._turno += 1 
 
     def fichaInesperada(self):
+
         novaEntidade = bd.CriaEntidade()
+        if not novaEntidade:
+            return
+        entidade = novaEntidade.mostraNome()
+
         if novaEntidade:
-            print("Adicionando ao combate")
+            print("Adicionado ao combate")
+            time.sleep(2)
             try:
-                iniciativa = int(input(f'Iniciativa de {novaEntidade.mostraNome()}: '))
-                self._personagens_comb.append(novaEntidade)
+                iniciativa = int(input(f'Iniciativa de {entidade}: '))
+                self._personagens_comb.append(entidade)
                 self._iniciativa.append(iniciativa)
+                self.OrganizaIniciativa()
+
             except:
                 print("Iniciativa inválida")
                 self._personagens_comb.append(novaEntidade)
                 self._iniciativa.append(0)
+
+    def editaFicha(self, personagem):
+
+        campanha = Campanha()
+        entidade = campanha.buscaEntidade(personagem)
+
+        entidade.editaEntidade()
+        
+    def addIniciativa(self, inic):
+        self._iniciativa.append(inic)        
 
     def menuCombate(self):
 
@@ -74,19 +101,7 @@ class ControlaCombate():
             while resposta not in [0,1,2,3,4]:
                 resposta = only_int()
 
-            if resposta == 0:
-                print()
-                os.system('cls')
-            elif resposta == 1:
-                os.system('cls')
-                return 1
-            elif resposta == 2:
-                self.fichaInesperada()
-                os.system('cls')
-                return 2
-            elif resposta == 3:
-                os.system('cls')
-                return 3 
+            return resposta
 
     def addAoCombate(self,entidade):
         self._personagens_comb.append(entidade)
@@ -94,33 +109,42 @@ class ControlaCombate():
     def removeDoCombate(self, entidade):
         self._personagens_comb.remove(entidade)
 
+
     def Combate(self):
 
-        ordem_jogada = self.OrganizaIniciativa()
+        
 
-        print(f"Ordem de iniciativa: {ordem_jogada}")
+        ordem = self.OrganizaIniciativa()
+
+        print(f"Ordem de iniciativa: {ordem}")
         while True:
+
 
             if self._turno == 0:
                 print("Rodada: ", self._rodada)
-            elif self._turno == (self._qtd_jogadores - 1):
+            elif self._turno == (len(self._ordemJogadores) - 1):
                 self._turno = 0
 
 
-            personagem = ordem_jogada[self._turno]
-            print(f"Vez de {personagem} jogar!")
+            personagem = self._ordemJogadores[self._turno]
+            print(f"Vez de {personagem.mostraNome()} jogar!")
             
-            print(f"Ficha da {personagem}... ")
-            
+            print(f"Ficha da {personagem.mostraNome()}... ")
+
             resposta = self.menuCombate()
-            if resposta == 1:
+            if resposta == 0:
+                self.editaFicha(personagem)
+                time.sleep(2)
+
+            elif resposta == 1:
                 self.proxTurno()
+            
+            elif resposta == 2:
+                self.fichaInesperada()
+
             else:
-                print("Fim de combate!")
+                print("Fim de Combate!")
+                time.sleep(3)
                 break
 
 #TESTE ORGANIZA INICIATIVA            
-'''combate = ControlaCombate()
-combate._personagens_comb = ["Vi","Ekko","Jinx","Caitlyn"]
-combate._iniciativa = [1,5,20,14]
-combate.Combate()'''

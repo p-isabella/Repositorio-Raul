@@ -48,8 +48,11 @@ def main():
                     controlador.DeletaCampanha()
                 
         elif escolha == "Combate":
-            campanha = controlador.buscaCampanha()
-            controlador.MenuPrincipal(campanha)
+            #Combate = ControlaCombate()
+            Combate = bd._BancoCombate[0]
+            Combate.Combate()
+            #campanha = controlador.buscaCampanha()
+            #controlador.MenuPrincipal(campanha)
 
             
         elif escolha == "Sair":

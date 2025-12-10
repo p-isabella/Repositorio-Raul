@@ -1,5 +1,6 @@
 from entidades import NPC, Jogador, Criatura
 from campanha import Campanha
+from controlaCombate import ControlaCombate
 
 def dadostestesBD(bd):
     c1 = Criatura()
@@ -60,3 +61,22 @@ def dadostestesBD(bd):
     camp1.iniciativaAtual = []
     camp1.turnoAtual = 0
     bd._BancoDeDados__BancodeCampanhas.append(camp1)
+
+    camp1.addEntidadeCampanha(j1)
+    camp1.addEntidadeCampanha(npc2)
+    camp1.addEntidadeCampanha(c2)
+
+    combate = ControlaCombate()
+
+    combate.addAoCombate(j1)
+    combate.addAoCombate(npc2)
+    combate.addAoCombate(c2)
+
+    combate.addIniciativa(12)
+    combate.addIniciativa(20)
+    combate.addIniciativa(8)
+
+    bd._BancoCombate.append(combate)
+
+
+
