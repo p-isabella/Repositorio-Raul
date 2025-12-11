@@ -23,8 +23,7 @@ class ControladorDeCampanha():
             escolha = questionary.select(
                 "Escolha uma opção",
                 choices=[
-                    questionary.Choice(title='Editar Iniciativa', value='1'),
-                    questionary.Choice(title='Remover Entidades', value='2'), 
+                    questionary.Choice(title='Adicionar/Remover Entidades', value='2'), 
                     questionary.Choice(title='Listar Entidades', value='3'), 
                     questionary.Choice(title='Gerenciar combate', value='4'),
                     questionary.Choice(title='Editar Campanha', value='5'),
@@ -34,46 +33,7 @@ class ControladorDeCampanha():
                 qmark=" "
             ).ask()
  
-            if escolha == '1':
-                if not controladorCombate._personagens_comb:
-                    print("A lista de personagens no combate está vazia.")
-                    time.sleep(1)
-                else:
-                    entidade_para_editar = questionary.select(
-                        "Qual entidade deseja alterar a iniciativa?",
-                        choices=controladorCombate._personagens_comb,
-                        qmark=" ",
-                        instruction=" "
-                    ).ask()
-
-                    if entidade_para_editar:
-                        novo_valor_inic = questionary.text(
-                            f"Digite o novo valor de iniciativa para {entidade_para_editar}:",
-                            validate=lambda text: text.isdigit() or "Por favor, digite um número inteiro.",
-                            qmark=" "
-                        ).ask()
-
-                        if novo_valor_inic is not None:
-                            try:
-                                novo_valor_int = int(novo_valor_inic)
-                                
-                                try:
-                                    index = controladorCombate._personagens_comb.index(entidade_para_editar)
-                                    valor_antigo = controladorCombate._iniciativa[index]
-                                    controladorCombate._iniciativa[index] = novo_valor_int
-                                    
-                                    print(f"Iniciativa de {entidade_para_editar} alterada de {valor_antigo} para {novo_valor_int}.")
-                                    
-                                    controladorCombate.OrganizaIniciativa() 
-                                except ValueError:
-                                    print("Erro: Entidade não encontrada na lista de combate.")
-                                    
-                            except ValueError:
-                                print("Valor inválido.")
-                            
-                            time.sleep(1.5)
-                
-            elif escolha == '2':
+            if escolha == '2':
                 campanhaAtual.importarBanco()
 
             elif escolha == '3':
