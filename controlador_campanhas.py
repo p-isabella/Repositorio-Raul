@@ -136,7 +136,7 @@ class ControladorDeCampanha():
                         time.sleep(1)
                         return
                     else:
-                        controladorCombate.Combate()
+                        controladorCombate.Combate(campanhaAtual)
 
                 if resposta == '0':
                     break

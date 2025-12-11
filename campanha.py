@@ -15,7 +15,6 @@ class Campanha():
         self._Nome = "Campanha sem nome"
         self._Historia = "Campanha sem história"
         self._EntidadesCampanha = []
-        self.iniciativaAtual = [] #apagar
 
     #construtores classe campanha
     def obtemID(self):
@@ -74,12 +73,10 @@ class Campanha():
         return self._EntidadesCampanha
     
     def buscaEntidade(self, nome):
-        for i in self._EntidadesCampanha:
-            if i == nome:
-                return i
+        for obj in self._EntidadesCampanha:
+            if obj.mostraNome() == nome:
+                return obj
         
-
-    
     def importarBanco(self):
         while True:
             os.system('cls')

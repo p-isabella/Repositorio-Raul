@@ -64,7 +64,7 @@ class ControlaCombate():
             print("Adicionado ao combate")
             time.sleep(2)
             try:
-                iniciativa = int(input(f'Iniciativa de {novaEntidade.mostraIniciativa()}: '))
+                iniciativa = int(input(f'Iniciativa de {novaEntidade.mostraNome()}: '))
                 self._personagens_comb.append(novaEntidade)
                 self._iniciativa.append(iniciativa)
                 self.OrganizaIniciativa()
@@ -74,9 +74,8 @@ class ControlaCombate():
                 self._personagens_comb.append(novaEntidade)
                 self._iniciativa.append(0)
 
-    def editaFicha(self, personagem):
+    def editaFicha(self, personagem, campanha):
 
-        campanha = Campanha()
         entidade = campanha.buscaEntidade(personagem)
 
         entidade.editaEntidade()
@@ -108,10 +107,11 @@ class ControlaCombate():
     def removeDoCombate(self, entidade):
         self._personagens_comb.remove(entidade)
 
+    def visualizarFicha(self, entidade, campanha):
+        personagem = campanha.buscaEntidade(entidade)
+        personagem.visualizaEntidade()
 
-    def Combate(self):
-
-        
+    def Combate(self, campanha):
 
         ordem = self.OrganizaIniciativa()
 
@@ -125,10 +125,11 @@ class ControlaCombate():
             print(f"Vez de {personagem.mostraNome()} jogar!")
             
             print(f"Ficha da {personagem.mostraNome()}... ")
+            self.visualizarFicha(personagem.mostraNome(),campanha)
 
             resposta = self.menuCombate()
             if resposta == 0:
-                self.editaFicha(personagem.mostraNome())
+                self.editaFicha(personagem.mostraNome(), campanha)
                 time.sleep(2)
 
             elif resposta == 1:
